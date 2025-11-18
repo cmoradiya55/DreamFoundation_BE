@@ -10,6 +10,15 @@ export interface ApiResponse<T> {
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
+        // GraphQL context handling
+        const ctxType = context.getType() as string;
+        if (ctxType === 'graphql') {
+            return next.handle();
+        }
+
+        console.log('ResponseInterceptor invoked');
+
+        // HTTP context handling
         const ctx = context.switchToHttp();
         const response = ctx.getResponse();
 

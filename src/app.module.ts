@@ -9,6 +9,10 @@ import { typeOrmAsyncOptions } from '@db/data-source';
 import { BaseModule } from '@common/provider/base/base.module';
 import { PaginationModule } from '@common/provider/pagination/pagination.module';
 import { LoggerConfigService } from '@common/provider/logger/logger.service';
+import { join } from 'path';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { StudentRegistrationModule } from '@modules/student-registration/student-registration.module';
 
 @Module({
   imports: [
@@ -21,8 +25,15 @@ import { LoggerConfigService } from '@common/provider/logger/logger.service';
       load: config,
     }),
     TypeOrmModule.forRootAsync(typeOrmAsyncOptions),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
+    }),
     BaseModule,
     PaginationModule,
+    // Module Imports
+    StudentRegistrationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -19,6 +19,13 @@ export class SerializeInterceptor implements NestInterceptor {
     ) { }
 
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+        // GraphQL context handling
+        const ctxType = context.getType() as string;
+        if (ctxType === 'graphql') {
+            return next.handle();
+        }
+console.log('SerializeInterceptor invoked');
+        // HTTP context handling
         const dto = this.reflector.get<ClassConstructor<any>>('serializeDto', context.getHandler());
         const isPaginated = this.reflector.get<boolean>(IS_PAGINATED_KEY, context.getHandler());
 

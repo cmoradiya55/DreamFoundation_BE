@@ -13,6 +13,10 @@ export const PAGINATION = {
   MAXIMUM_LIMIT: 50,
 } as const;
 
+export const PREFIX = {
+  REGISTRATION_NUMBER: 'DF',
+} as const;
+
 export const QUEUE = {
   EMAIL: 'email',
   SMS: 'sms',

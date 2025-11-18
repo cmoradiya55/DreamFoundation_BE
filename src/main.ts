@@ -14,10 +14,10 @@ import { ResponseInterceptor } from './common/interceptor/response/response.inte
 
 async function bootstrap() {
   const API_PREFIX = 'api/v1';
-
+  const port = process.env.PORT || 3000;
   const app = await NestFactory.create(AppModule);
 
-  console.log('🚀 App started');
+  console.log(`🚀 App started on ${port}`);
 
   const config = app.get(ConfigService);
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
@@ -55,6 +55,7 @@ async function bootstrap() {
 
   ResponseHelper.init(config.getOrThrow<string>('aws.base_url'));
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(port);
+  console.log(`Application is running on: http://localhost:${port}/graphql`);
 }
 bootstrap();

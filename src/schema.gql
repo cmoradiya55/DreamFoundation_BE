@@ -1,0 +1,108 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateStudentRegistrationInput {
+  addressProof: String
+  allergyDetails: String
+  birthCertificate: String
+  bloodGroup: String
+  dateOfBirth: String!
+  emergencyContactName: String
+  emergencyContactNumber: String
+  emergencyContactRelation: String
+  fatherEmail: String
+  fatherMobileNumber: String!
+  fullName: String!
+  landmark: String
+  mobileCountryCode: String! = "+91"
+  motherMobileNumber: String
+  passportPhoto: String
+  residentialAddress: String
+  specialNeedsDetails: String
+  vaccinationRecord: String
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input GetStudentRegistrationDto {
+  id: Int!
+}
+
+type Mutation {
+  createStudentRegistration(createStudentRegistrationInput: CreateStudentRegistrationInput!): StudentRegistrationResponse!
+  removeStudentRegistration(id: Int!): StudentRegistrationResponse!
+  updateStudentRegistration(updateStudentRegistrationInput: UpdateStudentRegistrationInput!): StudentRegistrationResponse!
+}
+
+type PaginationGqlMeta {
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+input PaginationQueryDto {
+  limit: Int! = 10
+  page: Int! = 1
+}
+
+type Query {
+  studentRegistration(input: GetStudentRegistrationDto!): StudentRegistrationResponse
+  studentRegistrations(pagination: PaginationQueryDto!): StudentRegistrationPaginatedResponse!
+}
+
+type StudentRegistrationPaginatedResponse {
+  items: [StudentRegistrationResponse!]
+  meta: PaginationGqlMeta!
+}
+
+type StudentRegistrationResponse {
+  address_proof: String
+  allergy_details: String
+  birth_certificate: String
+  bloodGroup: String
+  createdAt: DateTime!
+  dateOfBirth: DateTime!
+  emergency_contact_name: String
+  emergency_contact_number: String
+  emergency_contact_relation: String
+  father_email: String
+  father_mobile_number: String!
+  fullName: String!
+  id: Int!
+  landmark: String
+  mobile_country_code: String!
+  mother_mobile_number: String
+  passport_photo: String
+  registrationNumber: String!
+  residential_address: String
+  special_needs_details: String
+  updatedAt: DateTime!
+  vaccination_record: String
+}
+
+input UpdateStudentRegistrationInput {
+  addressProof: String
+  allergyDetails: String
+  birthCertificate: String
+  bloodGroup: String
+  dateOfBirth: String
+  emergencyContactName: String
+  emergencyContactNumber: String
+  emergencyContactRelation: String
+  fatherEmail: String
+  fatherMobileNumber: String
+  fullName: String
+  id: Int!
+  landmark: String
+  mobileCountryCode: String
+  motherMobileNumber: String
+  passportPhoto: String
+  residentialAddress: String
+  specialNeedsDetails: String
+  vaccinationRecord: String
+}

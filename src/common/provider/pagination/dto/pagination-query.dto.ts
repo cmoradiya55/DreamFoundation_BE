@@ -1,14 +1,18 @@
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { IsInt, IsNumber, IsOptional, Min } from 'class-validator';
 import { Type, Transform } from 'class-transformer'; // Import Transform
 import { PAGINATION } from '@common/constants';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
+@InputType()
 export class PaginationQueryDto {
+  @Field(() => Int)
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
   @Min(1)
   public page: number = PAGINATION.DEFAULT_PAGE;
 
+  @Field(() => Int)
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
