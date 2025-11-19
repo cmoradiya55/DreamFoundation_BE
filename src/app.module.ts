@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { WinstonModule } from 'nest-winston';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmAsyncOptions } from '@db/data-source';
@@ -13,6 +13,8 @@ import { join } from 'path';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { StudentRegistrationModule } from '@modules/student-registration/student-registration.module';
+import { BullModule } from '@nestjs/bullmq';
+import { EmailProcessor } from '@common/queue-processor/email.processor';
 
 @Module({
   imports: [
@@ -30,12 +32,23 @@ import { StudentRegistrationModule } from '@modules/student-registration/student
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
     }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        connection: {
+          host: config.get<string>('redis.host'),
+          password: config.get<string>('redis.password'),
+          port: config.get<number>('redis.port'),
+        },
+      }),
+    }),
     BaseModule,
     PaginationModule,
     // Module Imports
     StudentRegistrationModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EmailProcessor],
 })
 export class AppModule { }

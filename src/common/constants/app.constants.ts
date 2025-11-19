@@ -15,13 +15,6 @@ export const PAGINATION = {
   MAXIMUM_LIMIT: 50,
 } as const;
 
-export const QUEUE = {
-  EMAIL: 'email',
-  SMS: 'sms',
-  WHATSAPP: 'whatsapp',
-  PUSH_NOTIFICATION: 'push_notification'
-} as const;
-
 export const OTP_TYPE = {
   SMS: 'sms',
   EMAIL: 'email',
@@ -66,4 +59,8 @@ export const STUDENT_REGISTRATION_PREFIX = {
   [StudentClassEnum.NURSERY]: 'NS',
   [StudentClassEnum.JR_KG]: 'JK',
   [StudentClassEnum.SR_KG]: 'SK',
+} as const;
+
+export const QUEUE = {
+  EMAIL: 'email',
 } as const;

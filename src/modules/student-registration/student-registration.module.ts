@@ -5,9 +5,16 @@ import { StudentRegistration } from './entity/student-registartion.entity';
 import { StudentRegistrationResolver } from './student-registration.resolver';
 import { TypeOrmStudentRegistrationRepository } from './repository/student-registration.repository';
 import { TypeOrmStudentRegistrationDocumentRepository } from './repository/student-registration-document.repository';
+import { BullModule } from '@nestjs/bullmq';
+import { QUEUE } from '@common/constants';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StudentRegistration])],
+  imports: [
+    BullModule.registerQueueAsync(
+      { name: QUEUE.EMAIL },
+    ),
+    TypeOrmModule.forFeature([StudentRegistration])
+  ],
   providers: [StudentRegistrationService, StudentRegistrationResolver,// BIND THE INTERFACE TOKEN TO THE IMPLEMENTATION
     {
       provide: 'IStudentRegistrationRepository',

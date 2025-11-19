@@ -76,6 +76,21 @@ export class StudentRegistrationResponse {
 
   @Field()
   updatedAt: Date;
+
+  @Field(() => [StudentDocumentResponse], { nullable: true })
+  documents?: StudentDocumentResponse[];
+}
+
+@ObjectType()
+export class StudentDocumentResponse {
+  @Field(() => Int)
+  id: number;
+
+  @Field()
+  documentType: string;
+
+  @Field()
+  documentUrl: string;
 }
 
 @ObjectType()

@@ -81,6 +81,12 @@ input StudentDocumentInput {
   documentUrl: String!
 }
 
+type StudentDocumentResponse {
+  documentType: String!
+  documentUrl: String!
+  id: Int!
+}
+
 type StudentRegistrationPaginatedResponse {
   items: [StudentRegistrationResponse!]
   meta: PaginationGqlMeta!
@@ -93,6 +99,7 @@ type StudentRegistrationResponse {
   bloodGroup: String
   createdAt: DateTime!
   dateOfBirth: DateTime!
+  documents: [StudentDocumentResponse!]
   emergency_contact_name: String
   emergency_contact_number: String
   emergency_contact_relation: String

@@ -28,7 +28,7 @@ export class TypeOrmStudentRegistrationRepository implements IStudentRegistratio
     }
 
     async findOneById(id: number, manager?: EntityManager): Promise<StudentRegistration> {
-        const data = await this.getRepo(manager).findOne({ where: { id } });
+        const data = await this.getRepo(manager).findOne({ where: { id }, relations: ['documents'] });
         if (!data) throw new NotFoundException('Student registration not found');
         return data;
     }

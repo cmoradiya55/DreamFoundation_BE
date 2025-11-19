@@ -22,3 +22,9 @@ export const awsConfig = registerAs('aws', () => ({
     base_url: process.env.AWS_S3_PUBLIC_BASE_URL,
     use_path_style_endpoint: process.env.AWS_USE_PATH_STYLE_ENDPOINT,
 }));
+
+export const redisConfig = registerAs('redis', () => ({
+    host: process.env.REDIS_HOST,
+    password: process.env.REDIS_PASSWORD,
+    port: process.env.REDIS_PORT,
+}));

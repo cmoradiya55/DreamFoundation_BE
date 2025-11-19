@@ -15,6 +15,23 @@ export class StudentRegistrationMapper {
     };
   }
 
+
+  static toDetailResponse(entity: StudentRegistration): Partial<StudentRegistrationResponse> {
+    return {
+      id: entity.id,
+      fullName: entity.full_name,              // <-- mapping DB field → API field
+      dateOfBirth: entity.date_of_birth,
+      bloodGroup: entity.blood_group,
+      registrationNumber: entity.registration_number,
+      createdAt: entity.created_at,
+      documents: entity.documents?.map(doc => ({
+        id: doc.id,
+        documentType: doc.document_type,
+        documentUrl: doc.document_url,
+      })) || [],
+    };
+  }
+
   static toCreateResponse(entity: StudentRegistration): Partial<StudentRegistrationResponse> {
     return {
       id: entity.id,
