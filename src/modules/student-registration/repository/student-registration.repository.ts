@@ -19,7 +19,7 @@ export class TypeOrmStudentRegistrationRepository implements IStudentRegistratio
             : this.repo;
     }
 
-    create(data: Partial<StudentRegistration>, manager?: EntityManager): StudentRegistration {
+    create(data: StudentRegistration, manager?: EntityManager): StudentRegistration {
         return this.getRepo(manager).create(data);
     }
 

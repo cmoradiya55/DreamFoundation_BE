@@ -2,25 +2,40 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input CreateStudentRegistrationInput {
-  addressProof: String
-  allergyDetails: String
-  birthCertificate: String
-  bloodGroup: String
+input CreateStudentRegistrationDto {
+  addressLine1: String!
+  addressLine2: String!
+  age: Int!
+  allergies: String
+  bloodGroup: String!
+  city: String!
+  class: String!
   dateOfBirth: String!
-  emergencyContactName: String
-  emergencyContactNumber: String
-  emergencyContactRelation: String
-  fatherEmail: String
-  fatherMobileNumber: String!
+  declarationAccepted: Boolean!
+  documents: [StudentDocumentInput!]
+  emergencyContactName: String!
+  emergencyContactRelation: String!
+  emergencyMobile: Float!
+  emergencyMobileCountryCode: Int!
+  fatherEmail: String!
+  fatherMobile: Float!
+  fatherMobileCountryCode: Int!
+  fatherName: String!
+  fatherOccupation: String!
+  feesAcknowledged: Boolean!
   fullName: String!
-  landmark: String
-  mobileCountryCode: String! = "+91"
-  motherMobileNumber: String
-  passportPhoto: String
-  residentialAddress: String
-  specialNeedsDetails: String
-  vaccinationRecord: String
+  gender: Gender!
+  hasAllergies: Boolean!
+  hasSpecialNeeds: Boolean!
+  landmark: String!
+  motherEmail: String!
+  motherMobile: Float!
+  motherMobileCountryCode: Int!
+  motherName: String!
+  motherOccupation: String!
+  pincode: String!
+  specialNeeds: String
+  termsAccepted: Boolean!
 }
 
 """
@@ -28,12 +43,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+enum Gender {
+  FEMALE
+  MALE
+  OTHER
+}
+
 input GetStudentRegistrationDto {
   id: Int!
 }
 
 type Mutation {
-  createStudentRegistration(createStudentRegistrationInput: CreateStudentRegistrationInput!): StudentRegistrationResponse!
+  createStudentRegistration(createStudentRegistrationInput: CreateStudentRegistrationDto!): StudentRegistrationResponse!
   removeStudentRegistration(id: Int!): StudentRegistrationResponse!
   updateStudentRegistration(updateStudentRegistrationInput: UpdateStudentRegistrationInput!): StudentRegistrationResponse!
 }
@@ -53,6 +74,11 @@ input PaginationQueryDto {
 type Query {
   studentRegistration(input: GetStudentRegistrationDto!): StudentRegistrationResponse
   studentRegistrations(pagination: PaginationQueryDto!): StudentRegistrationPaginatedResponse!
+}
+
+input StudentDocumentInput {
+  documentType: String!
+  documentUrl: String!
 }
 
 type StudentRegistrationPaginatedResponse {

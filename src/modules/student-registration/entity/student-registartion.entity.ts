@@ -1,104 +1,150 @@
-import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { registerEnumType } from '@nestjs/graphql';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  OneToMany,
+} from 'typeorm';
+import { StudentRegistrationDocument } from './student-registration-document.entity';
 
-@ObjectType()
-@Entity('student_registrations')
+export enum Gender {
+  MALE = 'male',
+  FEMALE = 'female',
+  OTHER = 'other',
+}
+
+registerEnumType(Gender, {
+  name: 'Gender',
+});
+
+@Entity({ name: 'student_registration' })
 export class StudentRegistration {
-  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
-  @Column({ unique: true, nullable: true })
-  registration_number: string;
+  @Column({ type: 'varchar', length: 50, unique: true, nullable: true })
+  registration_number?: string;
 
-  // PERSONAL DETAILS
-  @Field()
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   full_name: string;
 
-  @Field()
-  @Column()
+  @Column({ type: 'smallint' })
+  age: number;
+
+  @Column({ type: 'enum', enum: Gender })
+  gender: Gender;
+
+  @Column({ type: 'varchar', length: 100 })
+  class: string;
+
+  @Column({ type: 'date' })
   date_of_birth: Date;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  blood_group: string;
+  // Father
+  @Column({ type: 'varchar', length: 255 })
+  father_name: string;
 
-  // CONTACT
-  @Field()
-  @Column({ default: '+91' })
-  mobile_country_code: string;
+  @Column({ type: 'varchar', length: 255 })
+  father_occupation: string;
 
-  @Field()
-  @Column()
-  father_mobile_number: string;
+  @Column({ type: 'smallint' })
+  father_mobile_country_code: number;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: 'bigint' })
+  father_mobile: number;
+
+  @Column({ type: 'varchar', length: 255 })
   father_email: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  mother_mobile_number: string;
+  // Mother
+  @Column({ type: 'varchar', length: 255 })
+  mother_name: string;
 
-  // EMERGENCY
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255 })
+  mother_occupation: string;
+
+  @Column({ type: 'smallint' })
+  mother_mobile_country_code: number;
+
+  @Column({ type: 'bigint' })
+  mother_mobile: number;
+
+  @Column({ type: 'varchar', length: 255 })
+  mother_email: string;
+
+  // Emergency
+  @Column({ type: 'varchar', length: 255 })
   emergency_contact_name: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  emergency_contact_relation: string;
+  @Column({ type: 'varchar', length: 200 })
+  emergency_contact_person_relation: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  emergency_contact_number: string;
+  @Column({ type: 'smallint' })
+  emergency_mobile_country_code: number;
 
-  // ADDRESS
-  @Field({ nullable: true })
-  @Column({ type: 'text', nullable: true })
-  residential_address: string;
+  @Column({ type: 'bigint' })
+  emergency_mobile: number;
 
-  @Field({ nullable: true })
-  @Column({ type: 'text', nullable: true })
+  // Address
+  @Column({ type: 'text' })
+  address_line_1: string;
+
+  @Column({ type: 'text' })
+  address_line_2: string;
+
+  @Column({ type: 'varchar', length: 255 })
   landmark: string;
 
-  // MEDICAL
-  @Field({ nullable: true })
-  @Column({ type: 'text', nullable: true })
-  allergy_details: string;
+  @Column({ type: 'varchar', length: 255 })
+  city: string;
 
-  @Field({ nullable: true })
-  @Column({ type: 'text', nullable: true })
-  special_needs_details: string;
+  @Column({ type: 'varchar', length: 50 })
+  pincode: string;
 
-  // DOCUMENTS (store file path)
-  @Field({ nullable: true })
-  @Column({ type: 'text', nullable: true })
-  birth_certificate: string;
+  // Medical
+  @Column({ type: 'varchar', length: 15 })
+  blood_group: string;
 
-  @Field({ nullable: true })
-  @Column({ type: 'text', nullable: true })
-  passport_photo: string;
+  @Column({ type: 'boolean', default: false })
+  has_allergies: boolean;
 
-  @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
-  address_proof: string;
+  allergies?: string;
 
-  @Field({ nullable: true })
+  @Column({ type: 'boolean', default: false })
+  has_special_needs: boolean;
+
   @Column({ type: 'text', nullable: true })
-  vaccination_record: string;
+  special_needs?: string;
 
-  // SYSTEM
-  @Field()
-  @CreateDateColumn()
+  // Acknowledgements
+  @Column({ type: 'boolean', default: false })
+  fees_acknowledged: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  declaration_accepted: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  terms_accepted: boolean;
+
+  @Column({ type: 'smallint', default: 1 })
+  status: number;
+
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @Field()
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ type: 'timestamptz', nullable: true })
+  updated_at?: Date;
 
   @DeleteDateColumn({ type: 'timestamptz', nullable: true })
   deleted_at?: Date;
+
+  @OneToMany(
+    () => StudentRegistrationDocument,
+    (doc) => doc.student,
+  )
+  documents: StudentRegistrationDocument[];
 }

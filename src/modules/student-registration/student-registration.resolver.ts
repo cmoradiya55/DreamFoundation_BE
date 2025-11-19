@@ -1,11 +1,11 @@
 import { Resolver, Query, Args, Int, Mutation } from '@nestjs/graphql';
 import { StudentRegistrationService } from './student-registration.service';
 import { NotFoundException } from '@nestjs/common';
-import { CreateStudentRegistrationInput } from './dto/create-student-registration.dto';
 import { UpdateStudentRegistrationInput } from './dto/update-student-registration.dto';
 import { GetStudentRegistrationDto } from './dto/get-student-registartion.dto';
 import { StudentRegistrationPaginatedResponse, StudentRegistrationResponse } from './model/get-student-registartion.model';
 import { PaginationQueryDto } from '@common/provider/pagination/dto/pagination-query.dto';
+import { CreateStudentRegistrationDto } from './dto/create-student-registration.dto';
 
 @Resolver()
 export class StudentRegistrationResolver {
@@ -13,7 +13,7 @@ export class StudentRegistrationResolver {
 
 
   @Mutation(() => StudentRegistrationResponse)
-  async createStudentRegistration(@Args('createStudentRegistrationInput') createStudentRegistrationInput: CreateStudentRegistrationInput) {
+  async createStudentRegistration(@Args('createStudentRegistrationInput') createStudentRegistrationInput: CreateStudentRegistrationDto) {
     const data = await this.studentRegistrationService.createStudentRegistration(createStudentRegistrationInput);
     return data;
   }

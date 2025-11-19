@@ -4,6 +4,7 @@ import { StudentRegistrationService } from './student-registration.service';
 import { StudentRegistration } from './entity/student-registartion.entity';
 import { StudentRegistrationResolver } from './student-registration.resolver';
 import { TypeOrmStudentRegistrationRepository } from './repository/student-registration.repository';
+import { TypeOrmStudentRegistrationDocumentRepository } from './repository/student-registration-document.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([StudentRegistration])],
@@ -12,9 +13,14 @@ import { TypeOrmStudentRegistrationRepository } from './repository/student-regis
       provide: 'IStudentRegistrationRepository',
       useClass: TypeOrmStudentRegistrationRepository,
     },
+    {
+      provide: 'IStudentRegistrationDocumentRepository',
+      useClass: TypeOrmStudentRegistrationDocumentRepository,
+    },
   ],
   exports: [
     'IStudentRegistrationRepository',
+    'IStudentRegistrationDocumentRepository',
     StudentRegistrationService,
   ],
 })

@@ -1,85 +1,203 @@
-import { InputType, Field } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, Length, IsOptional, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsEmail,
+  IsEnum,
+  IsBoolean,
+  IsInt,
+  Min,
+  Max,
+  IsDateString,
+  Length,
+  ValidateNested,
+} from 'class-validator';
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { Gender } from '../entity/student-registartion.entity';
+import { Type } from 'class-transformer';
+import { StudentClassEnum } from '@common/enum/app.enum';
+import { ENUM_MEMBER_TYPE } from '@common/constants';
+import { getEnumMembers } from '@common/helper/enum.helper';
 
 @InputType()
-export class CreateStudentRegistrationInput {
+export class CreateStudentRegistrationDto {
+  // Basic
   @Field()
+  @IsString()
   @IsNotEmpty()
-  @Length(2, 100)
+  @Length(1, 255)
   fullName: string;
 
+  @Field(() => Int)
+  @IsInt()
+  @Min(1)
+  @Max(150)
+  age: number;
+
+  @Field(() => Gender)
+  @IsEnum(Gender)
+  gender: Gender;
+
   @Field()
+  @IsEnum(StudentClassEnum, {
+    message: `Module must be one of the following: ${getEnumMembers(StudentClassEnum, ENUM_MEMBER_TYPE.VALUES).join(', ')}`,
+  })
+  @IsString()
   @IsNotEmpty()
+  @Length(1, 100)
+  class: string;
+
+  @Field()
   @IsDateString()
   dateOfBirth: string;
 
-  @Field({ nullable: true })
+  // Father
+  @Field()
+  @IsString()
   @IsNotEmpty()
-  @Length(1, 5)
-  bloodGroup: string;
-
-  @Field({ defaultValue: "+91" })
-  @Length(2, 5)
-  mobileCountryCode: string;
+  fatherName: string;
 
   @Field()
-  @Length(7, 15)
-  fatherMobileNumber: string;
+  @IsString()
+  @IsNotEmpty()
+  fatherOccupation: string;
 
-  @Field({ nullable: true })
+  @Field(() => Int)
+  @IsInt()
+  fatherMobileCountryCode: number;
+
+  @Field()
+  @IsInt()
+  fatherMobile: number;
+
+  @Field()
   @IsNotEmpty()
   @IsEmail()
   fatherEmail: string;
 
-  @Field({ nullable: true })
+  // Mother
+  @Field()
+  @IsString()
   @IsNotEmpty()
-  @Length(7, 15)
-  motherMobileNumber: string;
+  motherName: string;
 
-  @Field({ nullable: true })
+  @Field()
+  @IsString()
   @IsNotEmpty()
-  @Length(2, 100)
+  motherOccupation: string;
+
+  @Field(() => Int)
+  @IsInt()
+  motherMobileCountryCode: number;
+
+  @Field()
+  @IsInt()
+  motherMobile: number;
+
+  @Field()
+  @IsNotEmpty()
+  @IsEmail()
+  motherEmail: string;
+
+  // Emergency
+  @Field()
+  @IsString()
+  @IsNotEmpty()
   emergencyContactName: string;
 
-  @Field({ nullable: true })
+  @Field()
+  @IsString()
   @IsNotEmpty()
-  @Length(2, 50)
   emergencyContactRelation: string;
 
-  @Field({ nullable: true })
-  @IsNotEmpty()
-  @Length(7, 15)
-  emergencyContactNumber: string;
+  @Field(() => Int)
+  @IsInt()
+  emergencyMobileCountryCode: number;
 
-  @Field({ nullable: true })
-  @IsNotEmpty()
-  residentialAddress: string;
+  @Field()
+  @IsInt()
+  emergencyMobile: number;
 
-  @Field({ nullable: true })
+  // Address
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  addressLine1: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  addressLine2: string;
+
+  @Field()
+  @IsString()
   @IsNotEmpty()
   landmark: string;
 
-  @Field({ nullable: true })
+  @Field()
+  @IsString()
   @IsNotEmpty()
-  allergyDetails: string;
+  city: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  pincode: string;
+
+  // Medical
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  bloodGroup: string;
+
+  @Field()
+  @IsBoolean()
+  hasAllergies: boolean;
 
   @Field({ nullable: true })
-  @IsNotEmpty()
-  specialNeedsDetails: string;
+  @IsOptional()
+  @IsString()
+  allergies?: string;
+
+  @Field()
+  @IsBoolean()
+  hasSpecialNeeds: boolean;
 
   @Field({ nullable: true })
-  @IsNotEmpty()
-  birthCertificate: string;
+  @IsOptional()
+  @IsString()
+  specialNeeds?: string;
 
-  @Field({ nullable: true })
-  @IsNotEmpty()
-  passportPhoto: string;
+  // Flags
+  @Field()
+  @IsBoolean()
+  feesAcknowledged: boolean;
 
-  @Field({ nullable: true })
-  @IsNotEmpty()
-  addressProof: string;
+  @Field()
+  @IsBoolean()
+  declarationAccepted: boolean;
 
-  @Field({ nullable: true })
+  @Field()
+  @IsBoolean()
+  termsAccepted: boolean;
+
+  @Field(() => [StudentDocumentInput], { nullable: true })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => StudentDocumentInput)
+  documents?: StudentDocumentInput[];
+}
+
+
+@InputType()
+export class StudentDocumentInput {
+  @Field()
+  @IsString()
   @IsNotEmpty()
-  vaccinationRecord: string;
+  documentType: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  documentUrl: string;
 }

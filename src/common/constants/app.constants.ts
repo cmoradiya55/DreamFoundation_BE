@@ -1,3 +1,5 @@
+import { StudentClassEnum } from "@common/enum/app.enum";
+
 export const APP = {
   CODE_HASH_SALT: 'dream_foundation_salt_2025!',
 } as const;
@@ -11,10 +13,6 @@ export const PAGINATION = {
   DEFAULT_PAGE: 1,
   DEFAULT_LIMIT: 10,
   MAXIMUM_LIMIT: 50,
-} as const;
-
-export const PREFIX = {
-  REGISTRATION_NUMBER: 'DF',
 } as const;
 
 export const QUEUE = {
@@ -52,4 +50,20 @@ export const S3_BUCKETS = {
 
 export const SYSTEM_SETTING = {
   INTEREST_PERCENTAGE: 1,
+} as const;
+
+
+export const STUDENT_REGISTRATION_STATUS = {
+  PENDING: 1,
+  APPROVED: 2,
+  REJECTED: 3,
+} as const;
+
+export const STUDENT_REGISTRATION_PREFIX = {
+  [StudentClassEnum.TENDER_CARE]: 'TC',
+  [StudentClassEnum.JUMP_START]: 'JS',
+  [StudentClassEnum.PLAYGROUP]: 'PG',
+  [StudentClassEnum.NURSERY]: 'NS',
+  [StudentClassEnum.JR_KG]: 'JK',
+  [StudentClassEnum.SR_KG]: 'SK',
 } as const;
