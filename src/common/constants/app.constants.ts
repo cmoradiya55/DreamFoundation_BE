@@ -64,3 +64,12 @@ export const STUDENT_REGISTRATION_PREFIX = {
 export const QUEUE = {
   EMAIL: 'email',
 } as const;
+
+export const TEACHER_REGISTRATION_STATUS = {
+  PENDING: 1,
+  APPROVED: 2,
+  REJECTED: 3,
+} as const;
+
+
+export const TEACHER_REGISTRATION_PREFIX = 'TR';

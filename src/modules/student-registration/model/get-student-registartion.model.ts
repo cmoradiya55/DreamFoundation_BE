@@ -1,6 +1,5 @@
 import { PaginatedGQLResponse } from '@common/provider/pagination/model/paginated-response.model';
-import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class StudentRegistrationResponse {

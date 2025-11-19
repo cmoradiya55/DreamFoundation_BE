@@ -38,6 +38,28 @@ input CreateStudentRegistrationDto {
   termsAccepted: Boolean!
 }
 
+input CreateTeacherRegistrationDto {
+  addressLine1: String!
+  addressLine2: String!
+  city: String!
+  dateOfBirth: String!
+  declarationAccepted: Boolean!
+  documents: [TeacherDocumentInput!]
+  educationalQualifications: [TeacherQualificationInput!]
+  email: String
+  fullName: String!
+  gender: TeacherGender!
+  hasBasicComputerKnowledge: Boolean!
+  knowMSOffice: Boolean!
+  knowOnlineTeachingTools: Boolean!
+  landmark: String!
+  maritalStatus: String!
+  mobile: Float!
+  mobileCountryCode: Int!
+  pincode: String!
+  teachingExperiences: [TeacherExperienceInput!]
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -55,6 +77,7 @@ input GetStudentRegistrationDto {
 
 type Mutation {
   createStudentRegistration(createStudentRegistrationInput: CreateStudentRegistrationDto!): StudentRegistrationResponse!
+  createTeacherRegistration(createTeacherRegistrationDto: CreateTeacherRegistrationDto!): TeacherRegistrationResponse!
   removeStudentRegistration(id: Int!): StudentRegistrationResponse!
   updateStudentRegistration(updateStudentRegistrationInput: UpdateStudentRegistrationInput!): StudentRegistrationResponse!
 }
@@ -74,6 +97,7 @@ input PaginationQueryDto {
 type Query {
   studentRegistration(input: GetStudentRegistrationDto!): StudentRegistrationResponse
   studentRegistrations(pagination: PaginationQueryDto!): StudentRegistrationPaginatedResponse!
+  teacherRegistration(id: Int!): TeacherRegistrationResponse!
 }
 
 input StudentDocumentInput {
@@ -116,6 +140,95 @@ type StudentRegistrationResponse {
   special_needs_details: String
   updatedAt: DateTime!
   vaccination_record: String
+}
+
+input TeacherDocumentInput {
+  documentType: String!
+  documentURL: String!
+}
+
+type TeacherDocumentResponse {
+  createdAt: DateTime!
+  documentType: String!
+  documentUrl: String!
+  id: Int!
+  updatedAt: DateTime!
+}
+
+input TeacherExperienceInput {
+  designation: String!
+  fromDate: String!
+  previousSchoolName: String!
+  toDate: String!
+  totalExperienceInMonths: String!
+  totalExperienceInYears: String!
+}
+
+type TeacherExperienceResponse {
+  createdAt: DateTime!
+  designation: String!
+  fromDate: DateTime!
+  id: Int!
+  previousSchoolName: String!
+  toDate: DateTime!
+  totalExperienceInMonth: Int!
+  totalExperienceInYear: Int!
+  updatedAt: DateTime!
+}
+
+"""Teacher gender"""
+enum TeacherGender {
+  female
+  male
+  other
+}
+
+input TeacherQualificationInput {
+  boardUniversityName: String!
+  percentageOrGrade: String!
+  qualification: String!
+  schoolCollegeName: String!
+  subjectsTaught: String!
+  year: Int!
+}
+
+type TeacherQualificationResponse {
+  boardOrUniversity: String!
+  createdAt: DateTime!
+  id: Int!
+  percentageOrGrade: String!
+  qualification: String!
+  schoolOrCollegeName: String!
+  subjectsTaught: String!
+  updatedAt: DateTime!
+  year: Int!
+}
+
+type TeacherRegistrationResponse {
+  addressLine1: String!
+  addressLine2: String!
+  city: String!
+  countryCode: Int!
+  createdAt: DateTime!
+  dateOfBirth: DateTime!
+  declarationAccepted: Boolean!
+  documents: [TeacherDocumentResponse!]
+  email: String
+  experiences: [TeacherExperienceResponse!]
+  fullName: String!
+  gender: TeacherGender!
+  hasBasicComputerKnowledge: Boolean!
+  id: Int!
+  knowMSOffice: Boolean!
+  knowOnlineTeachingTools: Boolean!
+  landmark: String!
+  maritalStatus: String
+  mobile: Float!
+  pincode: String!
+  qualifications: [TeacherQualificationResponse!]
+  registrationNumber: String!
+  status: Int
+  updatedAt: DateTime!
 }
 
 input UpdateStudentRegistrationInput {

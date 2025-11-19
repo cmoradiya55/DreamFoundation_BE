@@ -1,26 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { Repository, DataSource, EntityManager } from 'typeorm';
-import { IStudentRegistrationDocumentRepository } from '../interface/student-registration-document.interface';
-import { StudentRegistrationDocument } from '../entity/student-registration-document.entity';
+import { Repository, EntityManager } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ITeacherQualificationRepository } from '../interface/teacher-qualification.interface';
+import { TeacherQualification } from '../entities/teacher-qualification.entity';
 
 @Injectable()
-export class TypeOrmStudentRegistrationDocumentRepository implements IStudentRegistrationDocumentRepository {
-    private repo: Repository<StudentRegistrationDocument>;
-    constructor(private dataSource: DataSource) {
-        this.repo = this.dataSource.getRepository(StudentRegistrationDocument);
-    }
+export class TypeOrmTeacherQualificationRepository implements ITeacherQualificationRepository {
+    constructor(
+        @InjectRepository(TeacherQualification)
+        private readonly teacherQualificationRepo: Repository<TeacherQualification>,
+    ) { }
 
-    private getRepo(manager?: EntityManager): Repository<StudentRegistrationDocument> {
+    private getRepo(manager?: EntityManager): Repository<TeacherQualification> {
         return manager
-            ? manager.getRepository(StudentRegistrationDocument)
-            : this.repo;
+            ? manager.getRepository(TeacherQualification)
+            : this.teacherQualificationRepo;
     }
 
-    create(data: StudentRegistrationDocument, manager?: EntityManager): StudentRegistrationDocument {
+    create(data: TeacherQualification[], manager?: EntityManager): TeacherQualification[] {
         return this.getRepo(manager).create(data);
     }
 
-    async save(entity: StudentRegistrationDocument[], manager?: EntityManager): Promise<StudentRegistrationDocument[]> {
+    async save(entity: TeacherQualification[], manager?: EntityManager): Promise<TeacherQualification[]> {
         return await this.getRepo(manager).save(entity);
     }
 

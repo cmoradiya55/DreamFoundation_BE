@@ -8,14 +8,13 @@ import { lastValueFrom } from 'rxjs';
 
 export const EMAIL_TYPES = {
     STUDENT_REGISTRATION_CONFIRMATION: 'sendStudentRegistrationConfirmationEmail',
+    TEACHER_REGISTRATION_CONFIRMATION: 'sendTeacherRegistrationConfirmationEmail',
     OTP_EMAIL: 'sendOtpEmail',
 } as const;
 
 @Processor(QUEUE.EMAIL)
 export class EmailProcessor extends WorkerHost {
-    constructor(
-        private readonly config: ConfigService,
-    ) {
+    constructor() {
         super();
     }
 
@@ -25,6 +24,10 @@ export class EmailProcessor extends WorkerHost {
             case EMAIL_TYPES.STUDENT_REGISTRATION_CONFIRMATION:
                 console.log('Processing student registration confirmation email job:', job.data);
                 return this.handleStudentRegistrationConfirmationEmail(job.data);
+
+            case EMAIL_TYPES.TEACHER_REGISTRATION_CONFIRMATION:
+                console.log('Processing teacher registration confirmation email job:', job.data);
+                return this.handleTeacherRegistrationConfirmationEmail(job.data);
 
             case EMAIL_TYPES.OTP_EMAIL:
                 console.log('Processing sendOtpEmail job:', job.data);
@@ -76,5 +79,9 @@ export class EmailProcessor extends WorkerHost {
 
     async handleStudentRegistrationConfirmationEmail(job) {
         console.log('Handling student registration confirmation email with data: ..........');
+    }
+
+    async handleTeacherRegistrationConfirmationEmail(job) {
+        console.log('Handling teacher registration confirmation email with data: ..........');
     }
 }

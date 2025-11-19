@@ -15,6 +15,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { StudentRegistrationModule } from '@modules/student-registration/student-registration.module';
 import { BullModule } from '@nestjs/bullmq';
 import { EmailProcessor } from '@common/queue-processor/email.processor';
+import { TeacherRegistrationModule } from './modules/teacher-registration/teacher-registration.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { EmailProcessor } from '@common/queue-processor/email.processor';
     PaginationModule,
     // Module Imports
     StudentRegistrationModule,
+    TeacherRegistrationModule,
   ],
   controllers: [AppController],
   providers: [AppService, EmailProcessor],

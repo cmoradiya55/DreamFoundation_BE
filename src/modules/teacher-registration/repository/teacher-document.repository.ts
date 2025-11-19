@@ -1,26 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { Repository, DataSource, EntityManager } from 'typeorm';
-import { IStudentRegistrationDocumentRepository } from '../interface/student-registration-document.interface';
-import { StudentRegistrationDocument } from '../entity/student-registration-document.entity';
+import { Repository, EntityManager } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TeacherDocument } from '../entities/teacher-document.entity';
+import { ITeacherDocumentRepository } from '../interface/teacher-document.interface';
 
 @Injectable()
-export class TypeOrmStudentRegistrationDocumentRepository implements IStudentRegistrationDocumentRepository {
-    private repo: Repository<StudentRegistrationDocument>;
-    constructor(private dataSource: DataSource) {
-        this.repo = this.dataSource.getRepository(StudentRegistrationDocument);
-    }
+export class TypeOrmTeacherDocumentRepository implements ITeacherDocumentRepository {
+    constructor(
+        @InjectRepository(TeacherDocument)
+        private readonly teacherDocumentRepo: Repository<TeacherDocument>,
+    ) { }
 
-    private getRepo(manager?: EntityManager): Repository<StudentRegistrationDocument> {
+    private getRepo(manager?: EntityManager): Repository<TeacherDocument> {
         return manager
-            ? manager.getRepository(StudentRegistrationDocument)
-            : this.repo;
+            ? manager.getRepository(TeacherDocument)
+            : this.teacherDocumentRepo;
     }
 
-    create(data: StudentRegistrationDocument, manager?: EntityManager): StudentRegistrationDocument {
+    create(data: TeacherDocument[], manager?: EntityManager): TeacherDocument[] {
         return this.getRepo(manager).create(data);
     }
 
-    async save(entity: StudentRegistrationDocument[], manager?: EntityManager): Promise<StudentRegistrationDocument[]> {
+    async save(entity: TeacherDocument[], manager?: EntityManager): Promise<TeacherDocument[]> {
         return await this.getRepo(manager).save(entity);
     }
 

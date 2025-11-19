@@ -1,26 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, DataSource, EntityManager } from 'typeorm';
-import { IStudentRegistrationDocumentRepository } from '../interface/student-registration-document.interface';
-import { StudentRegistrationDocument } from '../entity/student-registration-document.entity';
+import { ITeacherRegistrationRepository } from '../interface/teacher-registration.interface';
+import { TeacherRegistration } from '../entities/teacher-registration.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class TypeOrmStudentRegistrationDocumentRepository implements IStudentRegistrationDocumentRepository {
-    private repo: Repository<StudentRegistrationDocument>;
-    constructor(private dataSource: DataSource) {
-        this.repo = this.dataSource.getRepository(StudentRegistrationDocument);
-    }
+export class TypeOrmTeacherRegistrationRepository implements ITeacherRegistrationRepository {
+    constructor(
+        @InjectRepository(TeacherRegistration)
+        private readonly teacherRegistrationRepo: Repository<TeacherRegistration>,
+    ) { }
 
-    private getRepo(manager?: EntityManager): Repository<StudentRegistrationDocument> {
+    private getRepo(manager?: EntityManager): Repository<TeacherRegistration> {
         return manager
-            ? manager.getRepository(StudentRegistrationDocument)
-            : this.repo;
+            ? manager.getRepository(TeacherRegistration)
+            : this.teacherRegistrationRepo;
     }
 
-    create(data: StudentRegistrationDocument, manager?: EntityManager): StudentRegistrationDocument {
+    async findByEmailOrMobile(email: string, country_code: number, mobile: number, manager?: EntityManager): Promise<TeacherRegistration | null> {
+        return await this.getRepo(manager).findOne({ where: [{ email }, { country_code, mobile }] });
+    }
+
+    create(data: TeacherRegistration, manager?: EntityManager): TeacherRegistration {
         return this.getRepo(manager).create(data);
     }
 
-    async save(entity: StudentRegistrationDocument[], manager?: EntityManager): Promise<StudentRegistrationDocument[]> {
+    async save(entity: TeacherRegistration, manager?: EntityManager): Promise<TeacherRegistration> {
         return await this.getRepo(manager).save(entity);
     }
 
