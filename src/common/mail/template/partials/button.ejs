@@ -1,0 +1,15 @@
+<div style="margin: <%= typeof margin !== 'undefined' ? margin : '30px 0' %>; text-align: <%= typeof align !== 'undefined' ? align : 'center' %>;">
+    <% if (typeof type !== 'undefined' && type === 'link') { %>
+    <a href="<%= url %>" class="btn" style="<%= typeof customStyle !== 'undefined' ? customStyle : '' %>">
+        <% if (typeof icon !== 'undefined' && icon) { %><%= icon %> <% } %><%= text %>
+    </a>
+    <% } else if (typeof type !== 'undefined' && type === 'button') { %>
+    <button onclick="<%= onclick %>" class="btn" style="<%= typeof customStyle !== 'undefined' ? customStyle : '' %>">
+        <% if (typeof icon !== 'undefined' && icon) { %><%= icon %> <% } %><%= text %>
+    </button>
+    <% } %>
+    
+    <% if (typeof subtitle !== 'undefined' && subtitle) { %>
+    <p style="margin-top: 10px; font-size: 13px; color: #666;"><%= subtitle %></p>
+    <% } %>
+</div>

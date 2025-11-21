@@ -28,3 +28,12 @@ export const redisConfig = registerAs('redis', () => ({
     password: process.env.REDIS_PASSWORD,
     port: process.env.REDIS_PORT,
 }));
+
+export const mailConfig = registerAs('mail', () => ({
+    host: process.env.MAIL_HOST,
+    port: parseInt(process.env.MAIL_PORT || '587', 10),
+    from: process.env.MAIL_USER,
+    from_name: process.env.MAIL_USERNAME,
+    pass: process.env.MAIL_PASS,
+    secure: process.env.MAIL_SECURE === 'true',
+}));
