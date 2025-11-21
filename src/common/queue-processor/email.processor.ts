@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 // import axios from 'axios';
 // import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
+import { MailService } from '@common/mail/mail.service';
 
 export const EMAIL_TYPES = {
     STUDENT_REGISTRATION_CONFIRMATION: 'sendStudentRegistrationConfirmationEmail',
@@ -15,6 +16,7 @@ export const EMAIL_TYPES = {
 export class EmailProcessor extends WorkerHost {
     constructor(
         private readonly config: ConfigService,
+        private readonly emailService: MailService,
     ) {
         super();
     }
@@ -75,6 +77,14 @@ export class EmailProcessor extends WorkerHost {
     }
 
     async handleStudentRegistrationConfirmationEmail(job) {
+        this.emailService.sendWelcomeEmail({
+            to: 'ishwartrada15@gmail.com',
+            subject: 'Welcome to Our Platform! 🎉',
+            templateData: {
+                userName: 'John Doe',
+                subject: 'Welcome!',
+            }
+        })
         console.log('Handling student registration confirmation email with data: ..........');
     }
 }
