@@ -67,10 +67,57 @@ export class S3Helper {
       Key: key,
       Body: file.buffer,
       ContentType: file.mimetype,
+      // Optional: Add metadata
+      Metadata: {
+        originalName: file.originalname,
+        uploadDate: new Date().toISOString(),
+      },
     });
 
     await this.s3.send(command);
     return key;
+  }
+
+
+  /**
+   * Store PDF buffer to S3 (for generated PDFs from Puppeteer)
+   */
+  static async storePdfBuffer(
+    buffer: Buffer,
+    fileName: string,
+    folder: string,
+  ): Promise<{ key: string; url: string }> {
+    if (!buffer || !this.s3 || !this.bucket) {
+      throw new Error('Missing buffer, S3 client, or bucket configuration');
+    }
+
+    try {
+      const timestamp = new Date().toISOString().replace(/\D/g, '');
+      const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const key = `${folder}/${timestamp}_${sanitizedFileName}`;
+
+      const command = new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: 'application/pdf',
+        Metadata: {
+          originalName: fileName,
+          uploadDate: new Date().toISOString(),
+          type: 'generated-pdf',
+        },
+      });
+
+      await this.s3.send(command);
+
+      const region = process.env.AWS_REGION || 'us-east-1';
+      const url = `https://${this.bucket}.s3.${region}.amazonaws.com/${key}`;
+
+      return { key, url };
+    } catch (error) {
+      console.error('Failed to store PDF to S3:', error);
+      throw error;
+    }
   }
 
   /**

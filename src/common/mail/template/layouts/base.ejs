@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Admission Registration' %></title>
+        <%- include('../components/styles') %>
+</head>
+<body>
+    <div class="email-container">
+        <%- include('../components/header', { 
+            title: headerTitle,
+            subtitle: headerSubtitle 
+        }) %>
+        
+        <div class="email-body">
+            <%- body %>
+        </div>
+        
+        <%- include('../components/footer') %>
+    </div>
+</body>
+</html>

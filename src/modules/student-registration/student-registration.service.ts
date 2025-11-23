@@ -1,6 +1,4 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { StudentRegistration } from './entity/student-registartion.entity';
 import { CreateStudentRegistrationDto } from './dto/create-student-registration.dto';
 import type { IStudentRegistrationRepository } from './interface/student-registration.interface';
@@ -172,7 +170,7 @@ export class StudentRegistrationService {
 
       const finalStudent = await this.studentRegistrationRepo.save(savedStudent, manager);
 
-      this.emailQueue.add(EMAIL_TYPES.STUDENT_REGISTRATION_CONFIRMATION, {})
+      this.emailQueue.add(EMAIL_TYPES.STUDENT_REGISTRATION_CONFIRMATION, { finalStudent })
 
       return StudentRegistrationMapper.toCreateResponse(finalStudent);
     }, true);

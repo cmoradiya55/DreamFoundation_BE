@@ -1,0 +1,207 @@
+<%
+// Student data with defaults
+const studentData = {
+  full_name: typeof full_name !== 'undefined' ? full_name : 'Student Name',
+  registration_number: typeof registration_number !== 'undefined' ? registration_number : 'REG-001',
+  student_class: typeof student_class !== 'undefined' ? student_class : 'Grade 1',
+  date_of_birth: typeof date_of_birth !== 'undefined' ? date_of_birth : 'N/A',
+  gender: typeof gender !== 'undefined' ? gender : 'N/A',
+  blood_group: typeof blood_group !== 'undefined' ? blood_group : 'N/A',
+};
+
+// Parent/Guardian data
+const parentData = {
+  father_name: typeof father_name !== 'undefined' ? father_name : 'N/A',
+  father_occupation: typeof father_occupation !== 'undefined' ? father_occupation : 'N/A',
+  father_email: typeof father_email !== 'undefined' ? father_email : 'N/A',
+  father_mobile: typeof father_mobile !== 'undefined' ? father_mobile : 'N/A',
+  
+  
+  mother_name: typeof mother_name !== 'undefined' ? mother_name : 'N/A',
+  mother_occupation: typeof mother_occupation !== 'undefined' ? mother_occupation : 'N/A',
+  mother_email: typeof mother_email !== 'undefined' ? mother_email : 'N/A',
+  mother_mobile: typeof mother_mobile !== 'undefined' ? mother_mobile : 'N/A',
+
+  emergency_contact_name: typeof emergency_contact_name !== 'undefined' ? emergency_contact_name : null,
+  emergency_contact_relation: typeof emergency_contact_relation !== 'undefined' ? emergency_contact_relation : null,
+  emergency_contact_phone: typeof emergency_contact_phone !== 'undefined' ? emergency_contact_phone : null,
+};
+
+// Address data
+const addressData = {
+  address_line_1: typeof address_line_1 !== 'undefined' ? address_line_1 : 'N/A',
+  address_line_2: typeof address_line_2 !== 'undefined' && address_line_2 ? address_line_2 : null,
+  landmark: typeof landmark !== 'undefined' && landmark ? landmark : null,
+  city: typeof city !== 'undefined' ? city : 'N/A',
+  pincode: typeof pincode !== 'undefined' ? pincode : 'N/A'
+};
+
+// Medical & special info
+const medicalData = {
+  has_allergies: typeof has_allergies !== 'undefined' ? has_allergies : false,
+  allergies: typeof allergies !== 'undefined' && allergies ? allergies : null,
+  has_special_needs: typeof has_special_needs !== 'undefined' ? has_special_needs : false,
+  special_needs: typeof special_needs !== 'undefined' && special_needs ? special_needs : null
+};
+
+// Format dates
+const submissionDate = typeof created_at !== 'undefined' ? new Date(created_at).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit'
+}) : new Date().toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+
+// Helper function to build info sections
+function buildInfoSection(data, skipNull = true) {
+  let html = '';
+  for (const [key, value] of Object.entries(data)) {
+    if (skipNull && (value === null || value === 'N/A')) continue;
+    const label = key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    html += '<p style="margin: 8px 0;"><strong>' + label + ':</strong> ' + value + '</p>';
+  }
+  return html;
+}
+
+// Build HTML sections
+const basicInfoHtml = 
+  '<p style="margin: 8px 0;"><strong>Full Name:</strong> ' + studentData.full_name + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Registration Number:</strong> ' + studentData.registration_number + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Class:</strong> ' + studentData.student_class + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Date of Birth:</strong> ' + studentData.date_of_birth + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Gender:</strong> ' + studentData.gender + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Blood Group:</strong> ' + studentData.blood_group + '</p>';
+
+const parentInfoHtml = 
+  '<h4 style="color: #1E4034; margin: 15px 0 10px 0;">Father Details</h4>' +
+  '<p style="margin: 8px 0;"><strong>Name:</strong> ' + parentData.father_name + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Occupation:</strong> ' + parentData.father_occupation + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Email:</strong> ' + parentData.father_email + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Mobile number:</strong> ' + parentData.father_mobile + '</p>' +
+  '<h4 style="color: #1E4034; margin: 15px 0 10px 0;">Mother Details</h4>' +
+  '<p style="margin: 8px 0;"><strong>Name:</strong> ' + parentData.mother_name + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Occupation:</strong> ' + parentData.mother_occupation + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Email:</strong> ' + parentData.mother_email + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Mobile number:</strong> ' + parentData.mother_mobile + '</p>' +
+  (parentData.emergency_contact_name ? 
+    '<h4 style="color: #1E4034; margin: 15px 0 10px 0;">Emergency Contact Details</h4>' +
+    '<p style="margin: 8px 0;"><strong>Name:</strong> ' + parentData.emergency_contact_name + '</p>' +
+    '<p style="margin: 8px 0;"><strong>Relation:</strong> ' + parentData.emergency_contact_relation + '</p>' +
+    '<p style="margin: 8px 0;"><strong>Phone:</strong> ' + parentData.emergency_contact_phone + '</p>' 
+  : '');
+
+const addressInfoHtml = 
+  '<p style="margin: 8px 0;"><strong>Address Line 1:</strong> ' + addressData.address_line_1 + '</p>' +
+  (addressData.address_line_2 ? '<p style="margin: 8px 0;"><strong>Address Line 2:</strong> ' + addressData.address_line_2 + '</p>' : '') +
+  (addressData.landmark ? '<p style="margin: 8px 0;"><strong>Landmark:</strong> ' + addressData.landmark + '</p>' : '') +
+  '<p style="margin: 8px 0;"><strong>City:</strong> ' + addressData.city + '</p>' +
+  '<p style="margin: 8px 0;"><strong>Pincode:</strong> ' + addressData.pincode + '</p>';
+
+let medicalInfoHtml = '';
+if (medicalData.has_allergies || medicalData.has_special_needs) {
+  medicalInfoHtml = 
+    (medicalData.has_allergies && medicalData.allergies ? '<p style="margin: 8px 0;"><strong>Allergies:</strong> ' + medicalData.allergies + '</p>' : '<p style="margin: 8px 0;">No allergies reported</p>') +
+    (medicalData.has_special_needs && medicalData.special_needs ? '<p style="margin: 8px 0;"><strong>Special Needs:</strong> ' + medicalData.special_needs + '</p>' : '<p style="margin: 8px 0;">No special needs reported</p>');
+}
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Details - <%= COMPANY.NAME %></title>
+  <%- include('components/styles') %>
+</head>
+
+<body>
+  <div class="email-container">
+
+    <%- include('components/header', {
+      subtitle: 'Student Registration Details'
+    }) %>
+
+    <div class="email-body">
+
+      <div class="welcome-section">
+        <h2 style="color: #1E4034; margin-bottom: 15px; margin-top: 0; font-size: 24px;">
+          Complete Registration Information
+        </h2>
+        <p style="margin-bottom: 10px;">
+          Below are the complete details submitted for <strong><%= studentData.full_name %></strong>.
+        </p>
+        <p style="margin-bottom: 10px; color: #666; font-size: 14px;">
+          <strong>Submission Date:</strong> <%= submissionDate %>
+        </p>
+      </div>
+
+      <%- include('components/info-box', {
+        title: 'Student Information',
+        type: 'info',
+        icon: '👤',
+        content: basicInfoHtml
+      }) %>
+
+      <%- include('components/info-box', {
+        title: 'Parent Information',
+        type: 'info',
+        icon: '👨‍👩‍👦',
+        content: parentInfoHtml
+      }) %>
+
+      <%- include('components/info-box', {
+        title: 'Address Information',
+        type: 'info',
+        icon: '📍',
+        content: addressInfoHtml
+      }) %>
+
+      <% if (medicalInfoHtml) { %>
+        <%- include('components/info-box', {
+          title: 'Medical Information',
+          type: 'warning',
+          icon: '⚕️',
+          content: medicalInfoHtml
+        }) %>
+      <% } %>
+
+      <div class="next-steps" style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin: 25px 0;">
+        <h3 style="color: #1E4034; margin-top: 0; margin-bottom: 15px;">Next Steps</h3>
+        <ol style="margin: 0; padding-left: 20px; color: #333;">
+          <li style="margin-bottom: 10px;">Application will be reviewed by the admissions team</li>
+          <li style="margin-bottom: 10px;">Document verification will be scheduled</li>
+          <li style="margin-bottom: 10px;">You will receive further instructions via email</li>
+          <li style="margin-bottom: 0;">Admission decision will be communicated within 5-7 business days</li>
+        </ol>
+      </div>
+
+      <div class="contact-info" style="background-color: #9ABD9B; padding: 20px; border-radius: 6px; margin: 25px 0;">
+        <h3 style="color: #153026; margin-top: 0; margin-bottom: 10px;">Questions?</h3>
+        <p style="margin: 0 0 10px 0; color: #153026;">
+          Contact our admissions office for any queries:
+        </p>
+        <p style="margin: 0 0 15px 0; color: #153026;">
+          <strong>Email:</strong> <%= COMPANY.EMAIL %><br>
+          <strong>Phone:</strong> <%= COMPANY.PHONE %>
+        </p>
+      </div>
+
+      <p style="margin: 20px 0 0 0; line-height: 1.6; color: #666; font-size: 14px;">
+        This is an automated email containing the registration details. Please keep this for your records.
+      </p>
+    </div>
+
+    <%- include('components/footer', {
+      institutionName: COMPANY.NAME,
+      privacyPolicyUrl: '#',
+      termsUrl: '#'
+    }) %>
+
+  </div>
+</body>
+</html>

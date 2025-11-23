@@ -35,5 +35,4 @@ export const mailConfig = registerAs('mail', () => ({
     from: process.env.MAIL_USER,
     from_name: process.env.MAIL_USERNAME,
     pass: process.env.MAIL_PASS,
-    secure: process.env.MAIL_SECURE === 'true',
 }));
