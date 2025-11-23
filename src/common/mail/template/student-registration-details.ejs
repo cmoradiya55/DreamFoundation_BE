@@ -1,42 +1,61 @@
 <%
-// Student data with defaults
+// ==========================================
+// 1. DATA PRE-PROCESSING & DEFAULTS
+// ==========================================
+
+// Student Data
 const studentData = {
-  full_name: typeof full_name !== 'undefined' ? full_name : 'Student Name',
-  registration_number: typeof registration_number !== 'undefined' ? registration_number : 'REG-001',
-  student_class: typeof student_class !== 'undefined' ? student_class : 'Grade 1',
-  date_of_birth: typeof date_of_birth !== 'undefined' ? date_of_birth : 'N/A',
+  full_name: typeof full_name !== 'undefined' ? full_name : 'N/A',
+  registration_number: typeof registration_number !== 'undefined' ? registration_number : 'REG-PENDING',
+  student_class: typeof student_class !== 'undefined' ? student_class : 'N/A',
+  date_of_birth: typeof date_of_birth !== 'undefined' ? date_of_birth : new Date().toISOString(),
   gender: typeof gender !== 'undefined' ? gender : 'N/A',
   blood_group: typeof blood_group !== 'undefined' ? blood_group : 'N/A',
 };
 
-// Parent/Guardian data
+// Age Calculation Logic
+let age = 'N/A';
+if (studentData.date_of_birth !== 'N/A') {
+    try {
+        const dob = new Date(studentData.date_of_birth);
+        const diff_ms = Date.now() - dob.getTime();
+        const age_dt = new Date(diff_ms); 
+        age = Math.abs(age_dt.getUTCFullYear() - 1970);
+    } catch (e) {
+        age = 'N/A';
+    }
+}
+
+// Parent Data
 const parentData = {
   father_name: typeof father_name !== 'undefined' ? father_name : 'N/A',
   father_occupation: typeof father_occupation !== 'undefined' ? father_occupation : 'N/A',
   father_email: typeof father_email !== 'undefined' ? father_email : 'N/A',
   father_mobile: typeof father_mobile !== 'undefined' ? father_mobile : 'N/A',
-  
+  father_code: typeof father_mobile_country_code !== 'undefined' ? father_mobile_country_code : '91',
   
   mother_name: typeof mother_name !== 'undefined' ? mother_name : 'N/A',
   mother_occupation: typeof mother_occupation !== 'undefined' ? mother_occupation : 'N/A',
   mother_email: typeof mother_email !== 'undefined' ? mother_email : 'N/A',
   mother_mobile: typeof mother_mobile !== 'undefined' ? mother_mobile : 'N/A',
+  mother_code: typeof mother_mobile_country_code !== 'undefined' ? mother_mobile_country_code : '91',
 
-  emergency_contact_name: typeof emergency_contact_name !== 'undefined' ? emergency_contact_name : null,
-  emergency_contact_relation: typeof emergency_contact_relation !== 'undefined' ? emergency_contact_relation : null,
-  emergency_contact_phone: typeof emergency_contact_phone !== 'undefined' ? emergency_contact_phone : null,
+  emergency_contact_name: typeof emergency_contact_name !== 'undefined' ? emergency_contact_name : 'N/A',
+  emergency_contact_relation: typeof emergency_contact_relation !== 'undefined' ? emergency_contact_relation : 'N/A',
+  emergency_mobile: typeof emergency_contact_phone !== 'undefined' ? emergency_contact_phone : 'N/A',
+  emergency_code: typeof emergency_mobile_country_code !== 'undefined' ? emergency_mobile_country_code : '91',
 };
 
-// Address data
+// Address Data
 const addressData = {
   address_line_1: typeof address_line_1 !== 'undefined' ? address_line_1 : 'N/A',
   address_line_2: typeof address_line_2 !== 'undefined' && address_line_2 ? address_line_2 : null,
-  landmark: typeof landmark !== 'undefined' && landmark ? landmark : null,
+  landmark: typeof landmark !== 'undefined' && landmark ? landmark : 'N/A',
   city: typeof city !== 'undefined' ? city : 'N/A',
   pincode: typeof pincode !== 'undefined' ? pincode : 'N/A'
 };
 
-// Medical & special info
+// Medical Data
 const medicalData = {
   has_allergies: typeof has_allergies !== 'undefined' ? has_allergies : false,
   allergies: typeof allergies !== 'undefined' && allergies ? allergies : null,
@@ -44,164 +63,353 @@ const medicalData = {
   special_needs: typeof special_needs !== 'undefined' && special_needs ? special_needs : null
 };
 
-// Format dates
-const submissionDate = typeof created_at !== 'undefined' ? new Date(created_at).toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit'
-}) : new Date().toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
-});
+// Meta & Documents
+const docData = typeof documents !== 'undefined' ? documents : [];
+const metaData = {
+    fees_acknowledged: typeof fees_acknowledged !== 'undefined' ? fees_acknowledged : false,
+    declaration_accepted: typeof declaration_accepted !== 'undefined' ? declaration_accepted : false,
+    terms_accepted: typeof terms_accepted !== 'undefined' ? terms_accepted : false,
+    created_at: typeof created_at !== 'undefined' ? created_at : new Date().toISOString()
+};
 
-// Helper function to build info sections
-function buildInfoSection(data, skipNull = true) {
-  let html = '';
-  for (const [key, value] of Object.entries(data)) {
-    if (skipNull && (value === null || value === 'N/A')) continue;
-    const label = key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-    html += '<p style="margin: 8px 0;"><strong>' + label + ':</strong> ' + value + '</p>';
-  }
-  return html;
-}
-
-// Build HTML sections
-const basicInfoHtml = 
-  '<p style="margin: 8px 0;"><strong>Full Name:</strong> ' + studentData.full_name + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Registration Number:</strong> ' + studentData.registration_number + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Class:</strong> ' + studentData.student_class + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Date of Birth:</strong> ' + studentData.date_of_birth + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Gender:</strong> ' + studentData.gender + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Blood Group:</strong> ' + studentData.blood_group + '</p>';
-
-const parentInfoHtml = 
-  '<h4 style="color: #1E4034; margin: 15px 0 10px 0;">Father Details</h4>' +
-  '<p style="margin: 8px 0;"><strong>Name:</strong> ' + parentData.father_name + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Occupation:</strong> ' + parentData.father_occupation + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Email:</strong> ' + parentData.father_email + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Mobile number:</strong> ' + parentData.father_mobile + '</p>' +
-  '<h4 style="color: #1E4034; margin: 15px 0 10px 0;">Mother Details</h4>' +
-  '<p style="margin: 8px 0;"><strong>Name:</strong> ' + parentData.mother_name + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Occupation:</strong> ' + parentData.mother_occupation + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Email:</strong> ' + parentData.mother_email + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Mobile number:</strong> ' + parentData.mother_mobile + '</p>' +
-  (parentData.emergency_contact_name ? 
-    '<h4 style="color: #1E4034; margin: 15px 0 10px 0;">Emergency Contact Details</h4>' +
-    '<p style="margin: 8px 0;"><strong>Name:</strong> ' + parentData.emergency_contact_name + '</p>' +
-    '<p style="margin: 8px 0;"><strong>Relation:</strong> ' + parentData.emergency_contact_relation + '</p>' +
-    '<p style="margin: 8px 0;"><strong>Phone:</strong> ' + parentData.emergency_contact_phone + '</p>' 
-  : '');
-
-const addressInfoHtml = 
-  '<p style="margin: 8px 0;"><strong>Address Line 1:</strong> ' + addressData.address_line_1 + '</p>' +
-  (addressData.address_line_2 ? '<p style="margin: 8px 0;"><strong>Address Line 2:</strong> ' + addressData.address_line_2 + '</p>' : '') +
-  (addressData.landmark ? '<p style="margin: 8px 0;"><strong>Landmark:</strong> ' + addressData.landmark + '</p>' : '') +
-  '<p style="margin: 8px 0;"><strong>City:</strong> ' + addressData.city + '</p>' +
-  '<p style="margin: 8px 0;"><strong>Pincode:</strong> ' + addressData.pincode + '</p>';
-
-let medicalInfoHtml = '';
-if (medicalData.has_allergies || medicalData.has_special_needs) {
-  medicalInfoHtml = 
-    (medicalData.has_allergies && medicalData.allergies ? '<p style="margin: 8px 0;"><strong>Allergies:</strong> ' + medicalData.allergies + '</p>' : '<p style="margin: 8px 0;">No allergies reported</p>') +
-    (medicalData.has_special_needs && medicalData.special_needs ? '<p style="margin: 8px 0;"><strong>Special Needs:</strong> ' + medicalData.special_needs + '</p>' : '<p style="margin: 8px 0;">No special needs reported</p>');
-}
+// Institution Config
+const institution = {
+    name: typeof institution_name !== 'undefined' ? institution_name : 'VisioniteTech Academy'
+};
 %>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration Details - <%= COMPANY.NAME %></title>
-  <%- include('components/styles') %>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission Form - <%= institution.name %></title>
+    <style>
+        /* Base Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            padding: 20px;
+            color: #333;
+            line-height: 1.5;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        
+        /* Container */
+        .pdf-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            padding: 30px;
+            position: relative;
+            background: #fff;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #73A997;
+        }
+        
+        .institution-name { color: #1E4034; font-size: 28px; margin-bottom: 5px; font-weight: bold; }
+        .form-title { color: #214236; font-size: 22px; margin-bottom: 10px; }
+        
+        /* Photo Box */
+        .student-photo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 110px;
+            height: 130px;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        /* Sections */
+        .section { margin-bottom: 25px; page-break-inside: avoid; }
+        
+        .section-title {
+            background-color: #1E4034;
+            color: white;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Grid System */
+        .form-row { display: flex; flex-wrap: wrap; margin-bottom: 12px; }
+        .form-group { padding: 0 10px; margin-bottom: 5px; }
+        .form-group.half { width: 50%; }
+        .form-group.full { width: 100%; }
+        .form-group.third { width: 33.33%; }
+        
+        /* Fields */
+        .label {
+            font-weight: 700;
+            color: #1C3D31;
+            margin-bottom: 4px;
+            display: block;
+            font-size: 12px;
+        }
+        
+        .value {
+            padding: 6px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #fcfcfc;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Declaration & Signature */
+        .declaration {
+            background-color: #f0f7f4;
+            padding: 15px;
+            border-left: 4px solid #73A997;
+            margin: 20px 0;
+            font-size: 12px;
+            text-align: justify;
+        }
+        
+        .signature-area { margin-top: 50px; padding-top: 10px; }
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 250px;
+            text-align: center;
+            padding-top: 5px;
+            font-weight: bold;
+            float: right;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 10px;
+            color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            clear: both;
+        }
+        
+        /* Print Overrides */
+        @media print {
+            body { padding: 0; background-color: #fff; }
+            .pdf-container { border: none; padding: 20px; max-width: 100%; }
+            .section-title { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="email-container">
 
-    <%- include('components/header', {
-      subtitle: 'Student Registration Details'
-    }) %>
-
-    <div class="email-body">
-
-      <div class="welcome-section">
-        <h2 style="color: #1E4034; margin-bottom: 15px; margin-top: 0; font-size: 24px;">
-          Complete Registration Information
-        </h2>
-        <p style="margin-bottom: 10px;">
-          Below are the complete details submitted for <strong><%= studentData.full_name %></strong>.
-        </p>
-        <p style="margin-bottom: 10px; color: #666; font-size: 14px;">
-          <strong>Submission Date:</strong> <%= submissionDate %>
-        </p>
-      </div>
-
-      <%- include('components/info-box', {
-        title: 'Student Information',
-        type: 'info',
-        icon: '👤',
-        content: basicInfoHtml
-      }) %>
-
-      <%- include('components/info-box', {
-        title: 'Parent Information',
-        type: 'info',
-        icon: '👨‍👩‍👦',
-        content: parentInfoHtml
-      }) %>
-
-      <%- include('components/info-box', {
-        title: 'Address Information',
-        type: 'info',
-        icon: '📍',
-        content: addressInfoHtml
-      }) %>
-
-      <% if (medicalInfoHtml) { %>
-        <%- include('components/info-box', {
-          title: 'Medical Information',
-          type: 'warning',
-          icon: '⚕️',
-          content: medicalInfoHtml
-        }) %>
-      <% } %>
-
-      <div class="next-steps" style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin: 25px 0;">
-        <h3 style="color: #1E4034; margin-top: 0; margin-bottom: 15px;">Next Steps</h3>
-        <ol style="margin: 0; padding-left: 20px; color: #333;">
-          <li style="margin-bottom: 10px;">Application will be reviewed by the admissions team</li>
-          <li style="margin-bottom: 10px;">Document verification will be scheduled</li>
-          <li style="margin-bottom: 10px;">You will receive further instructions via email</li>
-          <li style="margin-bottom: 0;">Admission decision will be communicated within 5-7 business days</li>
-        </ol>
-      </div>
-
-      <div class="contact-info" style="background-color: #9ABD9B; padding: 20px; border-radius: 6px; margin: 25px 0;">
-        <h3 style="color: #153026; margin-top: 0; margin-bottom: 10px;">Questions?</h3>
-        <p style="margin: 0 0 10px 0; color: #153026;">
-          Contact our admissions office for any queries:
-        </p>
-        <p style="margin: 0 0 15px 0; color: #153026;">
-          <strong>Email:</strong> <%= COMPANY.EMAIL %><br>
-          <strong>Phone:</strong> <%= COMPANY.PHONE %>
-        </p>
-      </div>
-
-      <p style="margin: 20px 0 0 0; line-height: 1.6; color: #666; font-size: 14px;">
-        This is an automated email containing the registration details. Please keep this for your records.
-      </p>
+<div class="pdf-container">
+    
+    <div class="header">
+        <h1 class="institution-name"><%= COMPANY.NAME %></h1>
+        <h2 class="form-title">Student Admission Form</h2>
+        <p>Registration No: <strong><%= studentData.registration_number %></strong></p>
+    </div>
+    <div class="section">
+        <div class="section-title">Personal Information</div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Full Name</div>
+                <div class="value"><%= studentData.full_name %></div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Date of Birth</div>
+                <div class="value"><%= new Date(studentData.date_of_birth).toLocaleDateString() %></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Age</div>
+                <div class="value"><%= age %> Years</div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Gender</div>
+                <div class="value"><%= studentData.gender %></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Class Seeking</div>
+                <div class="value"><%= studentData.student_class %></div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Blood Group</div>
+                <div class="value"><%= studentData.blood_group %></div>
+            </div>
+        </div>
     </div>
 
-    <%- include('components/footer', {
-      institutionName: COMPANY.NAME,
-      privacyPolicyUrl: '#',
-      termsUrl: '#'
-    }) %>
+    <div class="section">
+        <div class="section-title">Father's Information</div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Father's Name</div>
+                <div class="value"><%= parentData.father_name %></div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Occupation</div>
+                <div class="value"><%= parentData.father_occupation %></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Mobile Number</div>
+                <div class="value"><%= parentData.father_mobile %></div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Email Address</div>
+                <div class="value"><%= parentData.father_email %></div>
+            </div>
+        </div>
+    </div>
 
-  </div>
+    <div class="section">
+        <div class="section-title">Mother's Information</div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Mother's Name</div>
+                <div class="value"><%= parentData.mother_name %></div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Occupation</div>
+                <div class="value"><%= parentData.mother_occupation %></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Mobile Number</div>
+                <div class="value"><%= parentData.mother_mobile %></div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Email Address</div>
+                <div class="value"><%= parentData.mother_email %></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Address Details</div>
+        <div class="form-row">
+            <div class="form-group full">
+                <div class="label">Address Line 1</div>
+                <div class="value"><%= addressData.address_line_1 %></div>
+            </div>
+        </div>
+        <% if (addressData.address_line_2) { %>
+        <div class="form-row">
+            <div class="form-group full">
+                <div class="label">Address Line 2</div>
+                <div class="value"><%= addressData.address_line_2 %></div>
+            </div>
+        </div>
+        <% } %>
+        <div class="form-row">
+            <div class="form-group third">
+                <div class="label">Landmark</div>
+                <div class="value"><%= addressData.landmark %></div>
+            </div>
+            <div class="form-group third">
+                <div class="label">City</div>
+                <div class="value"><%= addressData.city %></div>
+            </div>
+            <div class="form-group third">
+                <div class="label">Pincode</div>
+                <div class="value"><%= addressData.pincode %></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Emergency & Medical</div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Emergency Contact</div>
+                <div class="value"><%= parentData.emergency_contact_name %> (<%= parentData.emergency_contact_relation %>)</div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Emergency Mobile</div>
+                <div class="value"><%= parentData.emergency_mobile %></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Known Allergies</div>
+                <div class="value">
+                    <%= medicalData.has_allergies ? medicalData.allergies : 'None' %>
+                </div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Special Needs</div>
+                <div class="value">
+                    <%= medicalData.has_special_needs ? medicalData.special_needs : 'None' %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="section">
+        <div class="section-title">Uploaded Documents</div>
+        <div class="form-row">
+            <div class="form-group full">
+                <div class="value" style="display: block; padding: 10px;">
+                    <% if (docData && docData.length > 0) { %>
+                        <ul style="padding-left: 20px; margin: 0;">
+                        <% docData.forEach(function(doc) { %>
+                            <li style="margin-bottom: 5px;">
+                                <strong><%= doc.document_type || 'Document' %>:</strong> 
+                                <span style="color: #555;"><%= doc.document_url || 'Link' %></span>
+                            </li>
+                        <% }); %>
+                        </ul>
+                    <% } else { %>
+                        <span style="color: #999;">No documents were attached to this application.</span>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="section">
+        <div class="section-title">Declaration</div>
+        <div class="declaration">
+            <p>I/We hereby declare that the information provided in this admission form is true and correct to the best of my/our knowledge. I/We understand that providing false information may result in the cancellation of admission.</p>
+            <br>
+            <p>
+                <strong>Terms Accepted:</strong> <%= metaData.terms_accepted ? 'YES' : 'NO' %> &nbsp;|&nbsp; 
+                <strong>Fees Policy Acknowledged:</strong> <%= metaData.fees_acknowledged ? 'YES' : 'NO' %>
+                <strong>Declaration Accepted:</strong> <%= metaData.declaration_accepted ? 'YES' : 'NO' %>
+            </p>
+        </div>
+
+        <!-- <div class="signature-area">
+            <div class="signature-line">Parent / Guardian Signature</div>
+        </div> -->
+    </div>
+
+    <div class="footer">
+        <p>Generated by <%= COMPANY.NAME %> System on <%= new Date().toLocaleString() %></p>
+        <p>Ref ID: <%= studentData.registration_number %></p>
+    </div>
+
+</div>
+
 </body>
 </html>
