@@ -1,0 +1,19 @@
+<%
+const instName = typeof institutionName !== 'undefined' ? institutionName : 'Our Institution';
+const privacyUrl = typeof privacyPolicyUrl !== 'undefined' ? privacyPolicyUrl : '#';
+const termsLink = typeof termsUrl !== 'undefined' ? termsUrl : '#';
+const currentYear = new Date().getFullYear();
+%>
+
+<div class="email-footer" style="background-color: #153026; color: white; padding: 20px; text-align: center; font-size: 14px;">
+    <p style="margin-bottom: 8px;">
+        &copy; <%= currentYear %> <%= instName %>. All rights reserved.
+    </p>
+    <p style="margin-bottom: 8px;">
+        <a href="<%= privacyUrl %>" style="color: #9ABD9B; text-decoration: none;">Privacy Policy</a> | 
+        <a href="<%= termsLink %>" style="color: #9ABD9B; text-decoration: none;">Terms of Service</a>
+    </p>
+    <p style="margin-bottom: 0;">
+        You are receiving this email because you registered on our website.
+    </p>
+</div>

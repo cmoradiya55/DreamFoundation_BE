@@ -1,6 +1,6 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { QUEUE } from '@common/constants';
+import { COMPANY, QUEUE } from '@common/constants';
 import { ConfigService } from '@nestjs/config';
 // import axios from 'axios';
 // import { HttpService } from '@nestjs/axios';
@@ -82,14 +82,90 @@ export class EmailProcessor extends WorkerHost {
     }
 
     async handleStudentRegistrationConfirmationEmail(job) {
-        this.emailService.sendWelcomeEmail({
+        const { finalStudent } = job;
+        console.log('Preparing to send student registration confirmation email for student:', finalStudent.emergency_mobile_country_code + finalStudent.emergency_mobile);
+        const template = 'student-registration-email';
+        const pdfTemplate = 'student-registration-details';
+
+        console.log('FInal Student Data:', finalStudent);
+        const templateData = {
+            COMPANY,
+            full_name: finalStudent.full_name,
+            registration_number: finalStudent.registration_number,
+            student_class: finalStudent.class,
+            father_name: finalStudent.father_name,
+            date_of_birth: finalStudent.date_of_birth,
+            email: finalStudent.father_email,
+            phone: finalStudent.father_mobile_country_code + "" + finalStudent.father_mobile,
+        }
+
+        const pdfData = {
+            COMPANY,
+            // Student info
+            full_name: finalStudent.full_name,
+            registration_number: finalStudent.registration_number,
+            student_class: finalStudent.class,
+            date_of_birth: finalStudent.date_of_birth,
+            gender: finalStudent.gender,
+            blood_group: finalStudent.blood_group,
+
+            // Parent info
+            father_name: finalStudent.father_name,
+            father_occupation: finalStudent.father_occupation,
+            // aaaaaaaaaaaaaa
+            father_email: finalStudent.father_email,
+            father_mobile: "+" + finalStudent.father_mobile_country_code + " " + finalStudent.father_mobile,
+            // aaaaaaaaaaaaaa
+            mother_name: finalStudent.mother_name,
+            mother_occupation: finalStudent.mother_occupation,
+            mother_email: finalStudent.mother_email,
+            mother_mobile: "+" + finalStudent.mother_mobile_country_code + " " + finalStudent.mother_mobile,
+
+            emergency_contact_name: finalStudent.emergency_contact_name,
+            emergency_contact_relation: finalStudent.emergency_contact_person_relation,
+            emergency_contact_phone: "+" + finalStudent.emergency_mobile_country_code + " " + finalStudent.emergency_mobile,
+            // Address
+            address_line_1: finalStudent.address_line_1,
+            address_line_2: finalStudent.address_line_2,
+            landmark: finalStudent.landmark,
+            city: finalStudent.city,
+            pincode: finalStudent.pincode,
+
+            // Medical
+            has_allergies: finalStudent.has_allergies,
+            allergies: finalStudent.allergies,
+            has_special_needs: finalStudent.has_special_needs,
+            special_needs: finalStudent.special_needs,
+
+            fees_acknowledged: finalStudent.fees_acknowledged,
+            declaration_accepted: finalStudent.declaration_accepted,
+            terms_accepted: finalStudent.terms_accepted,
+            // Metadata
+            created_at: finalStudent.created_at,
+        }
+
+        // render HTML and ensure it's a string before passing to sendEmail
+        const html = await this.emailService.renderEmailTemplate(template, templateData);
+        // render PDF and ensure it's a Buffer before attaching
+        const pdfBuffer = await this.emailService.renderEmailPDF(pdfTemplate, pdfData);
+
+        const mailOptions: any = {
+            // to: finalStudent.father_email,
             to: 'ishwartrada15@gmail.com',
-            subject: 'Welcome to Our Platform! 🎉',
-            templateData: {
-                userName: 'John Doe',
-                subject: 'Welcome!',
-            }
-        })
+            subject: 'Welcome to Dream Foundation!',
+            html,
+        };
+
+        mailOptions.attachments = [
+            {
+                filename: `${finalStudent.registration_number}_${finalStudent.full_name}.pdf`,
+                content: pdfBuffer,
+                contentType: 'application/pdf',
+            },
+        ];
+
+        await this.emailService.sendEmail(mailOptions);
+
         console.log('Handling student registration confirmation email with data: ..........');
     }
 

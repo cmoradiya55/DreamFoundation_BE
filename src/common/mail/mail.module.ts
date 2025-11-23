@@ -3,10 +3,11 @@ import { MailService } from './mail.service';
 import { MailController } from './mail.controller';
 import { EmailTemplateService } from './service/mail-template.service';
 import { EmailConfigService } from './config/mail-config.service';
+import { PdfGeneratorService } from './service/pdf-generator.service';
 
 @Module({
   controllers: [MailController],
-  providers: [MailService, EmailTemplateService, EmailConfigService],
+  providers: [MailService, EmailTemplateService, EmailConfigService, PdfGeneratorService],
   exports: [MailService],
 })
 export class MailModule { }

@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { EmailConfigService } from './config/mail-config.service';
 import { EmailTemplateService } from './service/mail-template.service';
+import { PdfGeneratorService } from './service/pdf-generator.service';
 
 @Injectable()
 export class MailService {
@@ -9,96 +10,59 @@ export class MailService {
     constructor(
         private readonly emailConfigService: EmailConfigService,
         private readonly emailTemplateService: EmailTemplateService,
+        private readonly pdfService: PdfGeneratorService,
     ) { }
 
-    async sendWelcomeEmail(options: {
-        to: string;
-        subject: string;
-        templateData: any;
-    }) {
+    async renderEmailTemplate(template: string, templateData: any) {
         try {
-            const template = 'welcome-email';
-            const info = await this.sendTemplatedEmail({
-                to: options.to,
-                subject: options.subject,
-                template: template,
-                templateData: {
-                    userName: 'John Doe',
-                    subject: 'Welcome!',
-                    companyName: 'Your Company',
-                    tagline: 'Excellence in Service',
-                    logoUrl: 'https://yoursite.com/logo.png',
-                    message: 'Welcome to our platform! We are excited to have you.',
-                    pdfDataUrl: `google.com/pdf/data`,
-                    additionalInfo: 'Your account is now active. Start exploring!',
-                    companyAddress: '123 Business St, City, State 12345',
-                    contactEmail: 'support@example.com',
-                    contactPhone: '(555) 123-4567',
-                    socialLinks: {
-                        facebook: 'https://facebook.com/yourcompany',
-                        twitter: 'https://twitter.com/yourcompany',
-                        linkedin: 'https://linkedin.com/company/yourcompany',
-                    },
-                    unsubscribeUrl: 'https://yoursite.com/unsubscribe?email=user@example.com',
-                },
-            });
-            const { success, messageId } = info;
-            if (!success) {
-                throw new Error(`Failed to send welcome email: ${info.error}`);
-            }
-
-            // await this.emailService.sendTemplatedEmail({
-            //     to: 'user@example.com',
-            //     subject: 'Welcome! 🎉',
-            //     template: 'welcome-email',
-            //     templateData: {
-            //         userName: 'John Doe',
-            //         subject: 'Welcome!',
-            //         companyName: 'Your Company',
-            //         tagline: 'Excellence in Service',
-            //         logoUrl: 'https://yoursite.com/logo.png',
-            //         message: 'Welcome to our platform! We are excited to have you.',
-            //         pdfDataUrl: `${baseUrl}/pdf/data?token=${pdfToken}`,
-            //         additionalInfo: 'Your account is now active. Start exploring!',
-            //         companyAddress: '123 Business St, City, State 12345',
-            //         contactEmail: 'support@example.com',
-            //         contactPhone: '(555) 123-4567',
-            //         socialLinks: {
-            //             facebook: 'https://facebook.com/yourcompany',
-            //             twitter: 'https://twitter.com/yourcompany',
-            //             linkedin: 'https://linkedin.com/company/yourcompany',
-            //         },
-            //         unsubscribeUrl: 'https://yoursite.com/unsubscribe?email=user@example.com',
-            //     },
-            // });
-
-            this.logger.log(`Email sent: ${messageId}`);
-            return { success: true, messageId: messageId };
+            const html = await this.emailTemplateService.renderTemplate(
+                template,
+                templateData,
+            );
+            if (!html) throw new BadRequestException('Failed to render email template');
+            return html;
         } catch (error) {
-            this.logger.error(`Failed to send email: ${error.message}`);
+            this.logger.error(`Failed to generate email template: ${error.message}`);
             return { success: false, error: error.message };
         }
     }
 
-    private async sendTemplatedEmail(options: {
-        to: string;
-        subject: string;
-        template: string;
-        templateData: any;
-    }) {
+    async renderEmailPDF(template: string, templateData: any) {
         try {
+            // Render the email template with provided data
             const html = await this.emailTemplateService.renderTemplate(
-                options.template,
-                options.templateData,
+                template,
+                templateData,
             );
 
-            const transporter = this.emailConfigService.getTransporter();
+            const pdfBuffer = await this.pdfService.generatePdfFromHtml(html);
+            if (!pdfBuffer) {
+                throw new Error('PDF generation returned null or undefined buffer');
+            }
+            return pdfBuffer;
+        } catch (error) {
+            this.logger.error(`Failed to generate email PDF: ${error.message}`);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async sendEmail(options: {
+        to: string;
+        subject: string;
+        body?: string;
+        html?: string;
+        attachments?: any[];
+    }) {
+        try {
+            const transporter = await this.emailConfigService.getTransporter();
 
             const info = await transporter.sendMail({
                 from: `${this.emailConfigService.getFromName()} <${this.emailConfigService.getFromAddress()}>`,
                 to: options.to,
                 subject: options.subject,
-                html: html,
+                text: options.body,
+                html: options.html,
+                attachments: options.attachments || [],
             });
 
             this.logger.log(`Email sent: ${info.messageId}`);

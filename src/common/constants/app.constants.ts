@@ -73,3 +73,11 @@ export const TEACHER_REGISTRATION_STATUS = {
 
 
 export const TEACHER_REGISTRATION_PREFIX = 'TR';
+
+export const COMPANY = {
+  NAME: 'Dream Foundation',
+  EMAIL: 'tinyyatra99@gmail.com',
+  PHONE: '+91 9562145780',
+  ADDRESS: '123 Dream St, Imagination City, Country',
+  WEBSITE: 'https://www.dreamfoundation.in/',
+} as const;

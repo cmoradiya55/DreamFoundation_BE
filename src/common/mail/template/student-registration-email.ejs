@@ -1,0 +1,123 @@
+<%
+// Student data with defaults
+
+const studentData = {
+  full_name: typeof full_name !== 'undefined' ? full_name : 'Student Name',
+  registration_number: typeof registration_number !== 'undefined' ? registration_number : 'REG-001',
+  student_class: typeof student_class !== 'undefined' ? student_class : 'Grade 1',
+  father_name: typeof father_name !== 'undefined' ? father_name : 'Parent Name',
+  date_of_birth: typeof date_of_birth !== 'undefined' ? date_of_birth : '',
+  email: typeof email !== 'undefined' ? email : '',
+  phone: typeof phone !== 'undefined' ? phone : ''
+};
+
+// Institution data with defaults
+const institutionData = {
+  name: typeof institutionName !== 'undefined' ? institutionName : COMPANY.NAME || 'Our Institution',
+  contactEmail: typeof contactEmail !== 'undefined' ? contactEmail : COMPANY.EMAIL,
+  contactPhone: typeof contactPhone !== 'undefined' ? contactPhone : COMPANY.PHONE,
+  websiteUrl: typeof websiteUrl !== 'undefined' ? websiteUrl : COMPANY.WEBSITE
+};
+
+// Format submission date
+const submissionDate = new Date().toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+
+// Build registration details HTML safely
+let registrationDetailsHtml = '';
+registrationDetailsHtml += '<p style="margin: 8px 0;"><strong>Student Name:</strong> ' + studentData.full_name + '</p>';
+registrationDetailsHtml += '<p style="margin: 8px 0;"><strong>Registration Number:</strong> ' + studentData.registration_number + '</p>';
+registrationDetailsHtml += '<p style="margin: 8px 0;"><strong>Class:</strong> ' + studentData.student_class + '</p>';
+registrationDetailsHtml += '<p style="margin: 8px 0;"><strong>Submission Date:</strong> ' + submissionDate + '</p>';
+
+if (studentData.date_of_birth) {
+  registrationDetailsHtml += '<p style="margin: 8px 0;"><strong>Date of Birth:</strong> ' + studentData.date_of_birth + '</p>';
+}
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admission Registration Confirmation - <%= COMPANY.NAME %></title>
+  <%- include('components/styles') %>
+</head>
+
+<body>
+  <div class="email-container">
+
+    <%- include('components/header', {
+      subtitle: 'Admission Registration Confirmation'
+    }) %>
+
+    <div class="email-body">
+
+      <div class="welcome-section">
+        <h2 style="color: #1E4034; margin-bottom: 15px; margin-top: 0; font-size: 24px;">
+          Thank You for Your Registration!
+        </h2>
+        <p style="margin-bottom: 10px;">Dear <%= studentData.father_name %>,</p>
+        <p style="margin-bottom: 10px;">
+          We are pleased to confirm that your child <strong><%= studentData.full_name %></strong>'s registration has been successfully received.
+        </p>
+      </div>
+
+      <%- include('components/info-box', {
+        title: 'Registration Details',
+        type: 'success',
+        icon: '✅',
+        content: registrationDetailsHtml
+      }) %>
+
+      <p style="margin: 15px 0;">
+        Your application for <strong><%= studentData.student_class %></strong> is currently being processed by our admissions team. We will review your submission and contact you within 3-5 business days with further instructions.
+      </p>
+
+      <div class="next-steps" style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin: 25px 0;">
+        <h3 style="color: #1E4034; margin-top: 0; margin-bottom: 15px;">What Happens Next?</h3>
+        <ol style="margin: 0; padding-left: 20px; color: #333;">
+          <li style="margin-bottom: 10px;">Our admissions team will review your application</li>
+          <li style="margin-bottom: 10px;">You will receive a confirmation email within 3-5 business days</li>
+          <li style="margin-bottom: 10px;">Further instructions regarding document submission will be provided</li>
+          <li style="margin-bottom: 0;">You will be notified about the admission status and next steps</li>
+        </ol>
+      </div>
+
+      <div class="contact-info" style="background-color: #9ABD9B; padding: 20px; border-radius: 6px; margin: 25px 0;">
+        <h3 style="color: #153026; margin-top: 0; margin-bottom: 10px;">Need Assistance?</h3>
+        <p style="margin: 0 0 10px 0; color: #153026;">
+          If you have any questions or concerns, please don't hesitate to contact us:
+        </p>
+        <p style="margin: 0 0 15px 0; color: #153026;">
+          <strong>Email:</strong> <%= institutionData.contactEmail %><br>
+          <strong>Phone:</strong> <%= institutionData.contactPhone %>
+        </p>
+
+        <%- include('components/button', {
+          text: 'Visit Our Website',
+          url: COMPANY.WEBSITE,
+          align: 'center',
+          color: '#1E4034'
+        }) %>
+      </div>
+
+      <p style="margin: 20px 0 0 0; line-height: 1.6;">
+        Best regards,<br>
+        <strong>Admissions Office</strong><br>
+        <%= COMPANY.NAME %>
+      </p>
+    </div>
+
+    <%- include('components/footer', {
+      institutionName: COMPANY.NAME,
+      privacyPolicyUrl: typeof privacyPolicyUrl !== 'undefined' ? privacyPolicyUrl : '#',
+      termsUrl: typeof termsUrl !== 'undefined' ? termsUrl : '#'
+    }) %>
+
+  </div>
+</body>
+</html>

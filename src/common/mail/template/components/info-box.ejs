@@ -1,0 +1,31 @@
+<%
+const boxTitle = typeof title !== 'undefined' ? title : 'Information';
+const boxType = typeof type !== 'undefined' ? type : 'info';
+const boxIcon = typeof icon !== 'undefined' ? icon : 'ℹ️';
+const boxContent = typeof content !== 'undefined' ? content : '';
+
+const typeColors = {
+  info: { bg: '#E3F2FD', border: '#2196F3', text: '#1565C0' },
+  success: { bg: '#E8F5E9', border: '#4CAF50', text: '#2E7D32' },
+  warning: { bg: '#FFF3E0', border: '#FF9800', text: '#E65100' },
+  error: { bg: '#FFEBEE', border: '#F44336', text: '#C62828' }
+};
+
+const colors = typeColors[boxType] || typeColors.info;
+%>
+
+<div class="info-box" style="background-color: <%= colors.bg %>; border-left: 4px solid <%= colors.border %>; padding: 20px; margin: 20px 0; border-radius: 4px;">
+  <div style="display: flex; align-items: flex-start;">
+    <div style="font-size: 24px; margin-right: 15px; line-height: 1;">
+      <%= boxIcon %>
+    </div>
+    <div style="flex: 1;">
+      <h3 style="color: <%= colors.text %>; margin: 0 0 10px 0; font-size: 18px;">
+        <%= boxTitle %>
+      </h3>
+      <div style="color: #333;">
+        <%- boxContent %>
+      </div>
+    </div>
+  </div>
+</div>
