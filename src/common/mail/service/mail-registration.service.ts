@@ -130,6 +130,7 @@ export class MailRegistrationService {
       terms_accepted: finalStudent.terms_accepted,
       // Metadata
       created_at: finalStudent.created_at,
+      documents: finalStudent.documents || [],
     }
 
     // render HTML and ensure it's a string before passing to sendEmail
