@@ -1,0 +1,95 @@
+<%
+// 1. PREPARE DISPLAY DATA
+// (Safe defaults to prevent crashes if data is missing)
+const teacherName = typeof full_name !== 'undefined' ? full_name : 'Applicant';
+const regNumber = typeof registration_number !== 'undefined' ? registration_number : 'PENDING';
+const contactEmail = typeof email !== 'undefined' ? email : 'N/A';
+const contactPhone = typeof phone !== 'undefined' ? phone : 'N/A';
+
+// 2. BUILD DETAILS HTML BLOCK
+// We build this string here so we can pass it cleanly into the 'info-box' component below
+let detailsHtml = '';
+detailsHtml += '<p style="margin: 8px 0;"><strong>Applicant Name:</strong> ' + teacherName + '</p>';
+detailsHtml += '<p style="margin: 8px 0;"><strong>Application ID:</strong> ' + regNumber + '</p>';
+detailsHtml += '<p style="margin: 8px 0;"><strong>Email:</strong> ' + contactEmail + '</p>';
+detailsHtml += '<p style="margin: 8px 0;"><strong>Phone:</strong> ' + contactPhone + '</p>';
+detailsHtml += '<p style="margin: 8px 0;"><strong>Submission Date:</strong> ' + new Date().toLocaleDateString() + '</p>';
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Application Received - <%= COMPANY.NAME %></title>
+  <%- include('components/styles') %>
+</head>
+
+<body>
+  <div class="email-container">
+
+    <%- include('components/header', {
+      title: COMPANY.SUB_COMPANY_1,
+      subtitle: 'Faculty Application Confirmation'
+    }) %>
+
+    <div class="email-body">
+
+      <div class="welcome-section">
+        <h2 style="color: #1E4034; margin-bottom: 15px; margin-top: 0; font-size: 24px;">
+          Application Received
+        </h2>
+        <p style="margin-bottom: 10px;">Dear <%= teacherName %>,</p>
+        <p style="margin-bottom: 10px;">
+          Thank you for expressing your interest in joining the <strong><%= COMPANY.NAME %></strong> faculty team. We have successfully received your registration details and supporting documents.
+        </p>
+      </div>
+
+      <%- include('components/info-box', {
+        title: 'Application Summary',
+        type: 'info', 
+        icon: '📋',
+        content: detailsHtml
+      }) %>
+
+      <p style="margin: 15px 0;">
+        A copy of your submitted application form is attached to this email for your records.
+      </p>
+
+      <div class="next-steps" style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin: 25px 0;">
+        <h3 style="color: #1E4034; margin-top: 0; margin-bottom: 15px;">Recruitment Process</h3>
+        <ol style="margin: 0; padding-left: 20px; color: #333;">
+          <li style="margin-bottom: 10px;"><strong>Screening:</strong> Our HR team will review your qualifications and experience.</li>
+          <li style="margin-bottom: 10px;"><strong>Shortlisting:</strong> If your profile matches our current requirements, we will contact you within 7 working days.</li>
+          <li style="margin-bottom: 10px;"><strong>Interview/Demo:</strong> Shortlisted candidates will be invited for a personal interview and a teaching demonstration.</li>
+          <li style="margin-bottom: 0;"><strong>Final Selection:</strong> Successful candidates will receive a formal offer letter.</li>
+        </ol>
+      </div>
+
+      <div class="contact-info" style="background-color: #9ABD9B; padding: 20px; border-radius: 6px; margin: 25px 0;">
+        <h3 style="color: #153026; margin-top: 0; margin-bottom: 10px;">HR Department</h3>
+        <p style="margin: 0 0 10px 0; color: #153026;">
+          For any updates regarding your application status, please quote your Application ID (<strong><%= regNumber %></strong>) in future correspondence.
+        </p>
+        <p style="margin: 0 0 15px 0; color: #153026;">
+          <strong>Email:</strong> <%= COMPANY.EMAIL %><br>
+          <strong>Phone:</strong> <%= COMPANY.PHONE %>
+        </p>
+      </div>
+
+      <p style="margin: 20px 0 0 0; line-height: 1.6;">
+        Best regards,<br>
+        <strong>Human Resources Team</strong><br>
+        <%= COMPANY.NAME %>
+      </p>
+    </div>
+
+    <%- include('components/footer', {
+      institutionName: COMPANY.NAME,
+      privacyPolicyUrl: '#',
+      termsUrl: '#'
+    }) %>
+
+  </div>
+</body>
+</html>

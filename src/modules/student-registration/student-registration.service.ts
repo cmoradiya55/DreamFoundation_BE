@@ -4,7 +4,7 @@ import { CreateStudentRegistrationDto } from './dto/create-student-registration.
 import type { IStudentRegistrationRepository } from './interface/student-registration.interface';
 import { BaseService } from '@common/provider/base/base.service';
 import { AppHelper } from '@common/helper/app.helper';
-import { QUEUE, STUDENT_REGISTRATION_PREFIX, STUDENT_REGISTRATION_STATUS } from '@common/constants';
+import { EMAIL_TYPES, QUEUE, STUDENT_REGISTRATION_PREFIX, STUDENT_REGISTRATION_STATUS } from '@common/constants';
 import { StudentRegistrationPaginatedResponse, StudentRegistrationResponse } from './model/get-student-registartion.model';
 import { StudentRegistrationMapper } from './mapper/student-registration.mapper';
 import { PaginationQueryDto } from '@common/provider/pagination/dto/pagination-query.dto';
@@ -12,13 +12,14 @@ import type { IStudentRegistrationDocumentRepository } from './interface/student
 import { StudentRegistrationDocument } from './entity/student-registration-document.entity';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
-import { EMAIL_TYPES } from '@common/queue-processor/email.processor';
+import { MailRegistrationService } from '@common/mail/service/mail-registration.service';
 
 @Injectable()
 export class StudentRegistrationService {
   constructor(
-    @InjectQueue(QUEUE.EMAIL) private emailQueue: Queue,
+    // @InjectQueue(QUEUE.EMAIL) private emailQueue: Queue,
     private readonly baseService: BaseService,
+    private readonly emailRegistrationService: MailRegistrationService,
     @Inject('IStudentRegistrationRepository') private studentRegistrationRepo: IStudentRegistrationRepository,
     @Inject('IStudentRegistrationDocumentRepository') private studentRegistrationDocumentRepo: IStudentRegistrationDocumentRepository,
   ) { }
@@ -170,7 +171,8 @@ export class StudentRegistrationService {
 
       const finalStudent = await this.studentRegistrationRepo.save(savedStudent, manager);
 
-      this.emailQueue.add(EMAIL_TYPES.STUDENT_REGISTRATION_CONFIRMATION, { finalStudent })
+      // this.emailQueue.add(EMAIL_TYPES.STUDENT_REGISTRATION_CONFIRMATION, { finalStudent })
+      this.emailRegistrationService.process(EMAIL_TYPES.STUDENT_REGISTRATION_CONFIRMATION, { finalStudent })
 
       return StudentRegistrationMapper.toCreateResponse(finalStudent);
     }, true);

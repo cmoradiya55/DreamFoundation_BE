@@ -34,17 +34,17 @@ import { TeacherRegistrationModule } from '@modules/teacher-registration/teacher
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
     }),
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        connection: {
-          host: config.get<string>('redis.host'),
-          password: config.get<string>('redis.password'),
-          port: config.get<number>('redis.port'),
-        },
-      }),
-    }),
+    // BullModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (config: ConfigService) => ({
+    //     connection: {
+    //       host: config.get<string>('redis.host'),
+    //       password: config.get<string>('redis.password'),
+    //       port: config.get<number>('redis.port'),
+    //     },
+    //   }),
+    // }),
     BaseModule,
     PaginationModule,
     // Module Imports

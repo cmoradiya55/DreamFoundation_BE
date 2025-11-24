@@ -12,12 +12,14 @@ import { TypeOrmTeacherExperienceRepository } from './repository/teacher-experie
 import { TypeOrmTeacherDocumentRepository } from './repository/teacher-document.repository';
 import { BullModule } from '@nestjs/bullmq';
 import { QUEUE } from '@common/constants';
+import { MailModule } from '@common/mail/mail.module';
 
 @Module({
   imports: [
-    BullModule.registerQueueAsync(
-      { name: QUEUE.EMAIL },
-    ),
+    // BullModule.registerQueueAsync(
+    //   { name: QUEUE.EMAIL },
+    // ),
+    MailModule,
     TypeOrmModule.forFeature([TeacherRegistration, TeacherQualification, TeacherExperience, TeacherDocument]),
   ],
   providers: [

@@ -82,3 +82,9 @@ export const COMPANY = {
   ADDRESS: '123 Dream St, Imagination City, Country',
   WEBSITE: 'https://www.dreamfoundation.in/',
 } as const;
+
+export const EMAIL_TYPES = {
+  STUDENT_REGISTRATION_CONFIRMATION: 'sendStudentRegistrationConfirmationEmail',
+  TEACHER_REGISTRATION_CONFIRMATION: 'sendTeacherRegistrationConfirmationEmail',
+  OTP_EMAIL: 'sendOtpEmail',
+} as const;

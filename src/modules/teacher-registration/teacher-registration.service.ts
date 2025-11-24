@@ -6,20 +6,21 @@ import type { ITeacherRegistrationRepository } from './interface/teacher-registr
 import type { ITeacherDocumentRepository } from './interface/teacher-document.interface';
 import type { ITeacherExperienceRepository } from './interface/teacher-experience.interface';
 import { TeacherRegistrationMapper } from './mapper/teacher-registration.mapper';
-import { EMAIL_TYPES } from '@common/queue-processor/email.processor';
 import { Queue } from 'bullmq';
-import { QUEUE, TEACHER_REGISTRATION_PREFIX, TEACHER_REGISTRATION_STATUS } from '@common/constants';
+import { EMAIL_TYPES, QUEUE, TEACHER_REGISTRATION_PREFIX, TEACHER_REGISTRATION_STATUS } from '@common/constants';
 import { InjectQueue } from '@nestjs/bullmq';
 import { TeacherDocument } from './entities/teacher-document.entity';
 import { TeacherQualification } from './entities/teacher-qualification.entity';
 import { TeacherExperience } from './entities/teacher-experience.entity';
 import { TeacherRegistration } from './entities/teacher-registration.entity';
 import { AppHelper } from '@common/helper/app.helper';
+import { MailRegistrationService } from '@common/mail/service/mail-registration.service';
 
 @Injectable()
 export class TeacherRegistrationService {
   constructor(
-    @InjectQueue(QUEUE.EMAIL) private emailQueue: Queue,
+    // @InjectQueue(QUEUE.EMAIL) private emailQueue: Queue,
+    private readonly emailRegistrationService: MailRegistrationService,
     private readonly baseService: BaseService,
     @Inject('ITeacherRegistrationRepository') private teacherRegistrationRepo: ITeacherRegistrationRepository,
     @Inject('ITeacherQualificationRepository') private teacherQualificationRepo: ITeacherQualificationRepository,
@@ -158,7 +159,10 @@ export class TeacherRegistrationService {
         await this.teacherExperienceRepo.save(experienceEntities, manager);
       }
 
-      this.emailQueue.add(EMAIL_TYPES.TEACHER_REGISTRATION_CONFIRMATION, {})
+      const teacherDetails = await this.teacherRegistrationRepo.findOneById(savedTeacher.id, manager);
+
+      // this.emailQueue.add(EMAIL_TYPES.TEACHER_REGISTRATION_CONFIRMATION, {})
+      this.emailRegistrationService.process(EMAIL_TYPES.TEACHER_REGISTRATION_CONFIRMATION, { teacherDetails })
 
       return TeacherRegistrationMapper.toCreateResponse(savedTeacher);
     }, true);

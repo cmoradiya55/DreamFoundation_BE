@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository, DataSource, EntityManager } from 'typeorm';
 import { ITeacherRegistrationRepository } from '../interface/teacher-registration.interface';
 import { TeacherRegistration } from '../entities/teacher-registration.entity';
@@ -29,11 +29,21 @@ export class TypeOrmTeacherRegistrationRepository implements ITeacherRegistratio
         return await this.getRepo(manager).save(entity);
     }
 
-    // async findOneById(id: number, manager?: EntityManager): Promise<StudentRegistration> {
-    //     const data = await this.getRepo(manager).findOne({ where: { id } });
-    //     if (!data) throw new NotFoundException('Student registration not found');
-    //     return data;
-    // }
+    async findOneById(id: number, manager?: EntityManager): Promise<TeacherRegistration> {
+        const data = await this.getRepo(manager).findOne({
+            where: {
+                id
+            },
+            relations: {
+                documents: true,
+                qualifications: true,
+                experiences: true
+            }
+        });
+
+        if (!data) throw new NotFoundException('Teacher registration not found');
+        return data;
+    }
 
     // async findAll(
     //     page: number,

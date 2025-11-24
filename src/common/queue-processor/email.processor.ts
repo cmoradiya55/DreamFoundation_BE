@@ -1,15 +1,9 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { COMPANY, QUEUE } from '@common/constants';
+import { COMPANY, EMAIL_TYPES, QUEUE } from '@common/constants';
 import { ConfigService } from '@nestjs/config';
 import { MailService } from '@common/mail/mail.service';
 import { AppHelper } from '@common/helper/app.helper';
-
-export const EMAIL_TYPES = {
-    STUDENT_REGISTRATION_CONFIRMATION: 'sendStudentRegistrationConfirmationEmail',
-    TEACHER_REGISTRATION_CONFIRMATION: 'sendTeacherRegistrationConfirmationEmail',
-    OTP_EMAIL: 'sendOtpEmail',
-} as const;
 
 @Processor(QUEUE.EMAIL)
 export class EmailProcessor extends WorkerHost {

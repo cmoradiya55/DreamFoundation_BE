@@ -1,0 +1,376 @@
+<%
+// ==========================================
+// 1. DATA PRE-PROCESSING & DEFAULTS
+// ==========================================
+
+// Teacher Personal Data
+const teacherData = {
+    full_name: typeof full_name !== 'undefined' ? full_name : 'N/A',
+    registration_number: typeof registration_number !== 'undefined' ? registration_number : 'REG-PENDING',
+    gender: typeof gender !== 'undefined' ? gender : 'N/A',
+    marital_status: typeof marital_status !== 'undefined' ? marital_status : 'N/A',
+    date_of_birth: typeof date_of_birth !== 'undefined' ? date_of_birth : new Date().toISOString(),
+    email: typeof email !== 'undefined' ? email : 'N/A',
+    mobile: typeof mobile !== 'undefined' ? mobile : 'N/A',
+    country_code: typeof country_code !== 'undefined' ? country_code : '91',
+};
+
+// Age Calculation
+let age = 'N/A';
+if (teacherData.date_of_birth !== 'N/A') {
+    try {
+        const dob = new Date(teacherData.date_of_birth);
+        const diff_ms = Date.now() - dob.getTime();
+        const age_dt = new Date(diff_ms); 
+        age = Math.abs(age_dt.getUTCFullYear() - 1970);
+    } catch (e) { age = 'N/A'; }
+}
+
+// Address Data
+const addressData = {
+    address_line_1: typeof address_line_1 !== 'undefined' ? address_line_1 : 'N/A',
+    address_line_2: typeof address_line_2 !== 'undefined' && address_line_2 ? address_line_2 : null,
+    landmark: typeof landmark !== 'undefined' && landmark ? landmark : 'N/A',
+    city: typeof city !== 'undefined' ? city : 'N/A',
+    pincode: typeof pincode !== 'undefined' ? pincode : 'N/A'
+};
+
+// Skills / Boolean Flags
+const skillsData = {
+    has_basic_computer_knowledge: typeof has_basic_computer_knowledge !== 'undefined' ? has_basic_computer_knowledge : false,
+    know_ms_office: typeof know_ms_office !== 'undefined' ? know_ms_office : false,
+    know_online_teaching_tools: typeof know_online_teaching_tools !== 'undefined' ? know_online_teaching_tools : false,
+};
+
+// Dynamic Arrays (Experience, Qualifications, Documents)
+// We default to empty arrays [] if data is missing to prevent crashes
+const experienceData = typeof experiences !== 'undefined' && Array.isArray(experiences) ? experiences : [];
+const qualificationData = typeof qualifications !== 'undefined' && Array.isArray(qualifications) ? qualifications : [];
+const docData = typeof documents !== 'undefined' && Array.isArray(documents) ? documents : [];
+
+// Meta Data
+const metaData = {
+    declaration_accepted: typeof declaration_accepted !== 'undefined' ? declaration_accepted : false,
+    created_at: typeof created_at !== 'undefined' ? created_at : new Date().toISOString()
+};
+
+// Institution Config
+const institution = {
+    name: typeof institution_name !== 'undefined' ? institution_name : 'VisioniteTech Academy' // Fallback name
+};
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration - <%= institution.name %></title>
+    <style>
+        /* =========================================
+           REUSING EXACT CSS FROM STUDENT TEMPLATE
+           FOR BRAND CONSISTENCY
+           ========================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            padding: 20px;
+            color: #333;
+            line-height: 1.5;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        
+        .pdf-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            padding: 30px;
+            position: relative;
+            background: #fff;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #73A997;
+        }
+        
+        .institution-name { color: #1E4034; font-size: 28px; margin-bottom: 5px; font-weight: bold; }
+        .form-title { color: #214236; font-size: 22px; margin-bottom: 10px; }
+        
+        .photo-box {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 110px;
+            height: 130px;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .section { margin-bottom: 25px; page-break-inside: avoid; }
+        
+        .section-title {
+            background-color: #1E4034;
+            color: white;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-row { display: flex; flex-wrap: wrap; margin-bottom: 12px; }
+        .form-group { padding: 0 10px; margin-bottom: 5px; }
+        .form-group.half { width: 50%; }
+        .form-group.full { width: 100%; }
+        .form-group.third { width: 33.33%; }
+        
+        .label {
+            font-weight: 700;
+            color: #1C3D31;
+            margin-bottom: 4px;
+            display: block;
+            font-size: 12px;
+        }
+        
+        .value {
+            padding: 6px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #fcfcfc;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* TABLE STYLES FOR EXPERIENCE/QUALIFICATION */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .data-table th {
+            background-color: #f0f7f4;
+            color: #1E4034;
+            font-weight: 600;
+        }
+        
+        .declaration {
+            background-color: #f0f7f4;
+            padding: 15px;
+            border-left: 4px solid #73A997;
+            margin: 20px 0;
+            font-size: 12px;
+            text-align: justify;
+        }
+        
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 10px;
+            color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            clear: both;
+        }
+        
+        @media print {
+            body { padding: 0; background-color: #fff; }
+            .pdf-container { border: none; padding: 20px; max-width: 100%; }
+            .section-title { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .data-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="pdf-container">
+    
+    <div class="header">
+        <h1 class="institution-name"><%= COMPANY.NAME + "(" + COMPANY.SUB_COMPANY_1 + ")" %></h1>
+        <h2 class="form-title">Teacher Application Form</h2>
+        <p>Registration No: <strong><%= teacherData.registration_number %></strong></p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Personal Information</div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Full Name</div>
+                <div class="value"><%= teacherData.full_name %></div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Date of Birth</div>
+                <div class="value"><%= new Date(teacherData.date_of_birth).toLocaleDateString() %> (Age: <%= age %>)</div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Gender</div>
+                <div class="value"><%= teacherData.gender %></div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Marital Status</div>
+                <div class="value"><%= teacherData.marital_status %></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group half">
+                <div class="label">Mobile Number</div>
+                <div class="value">+<%= teacherData.country_code %> <%= teacherData.mobile %></div>
+            </div>
+            <div class="form-group half">
+                <div class="label">Email Address</div>
+                <div class="value"><%= teacherData.email %></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Address Details</div>
+        <div class="form-row">
+            <div class="form-group full">
+                <div class="label">Address Line 1</div>
+                <div class="value"><%= addressData.address_line_1 %></div>
+            </div>
+        </div>
+        <% if (addressData.address_line_2) { %>
+        <div class="form-row">
+            <div class="form-group full">
+                <div class="label">Address Line 2</div>
+                <div class="value"><%= addressData.address_line_2 %></div>
+            </div>
+        </div>
+        <% } %>
+        <div class="form-row">
+            <div class="form-group third">
+                <div class="label">Landmark</div>
+                <div class="value"><%= addressData.landmark %></div>
+            </div>
+            <div class="form-group third">
+                <div class="label">City</div>
+                <div class="value"><%= addressData.city %></div>
+            </div>
+            <div class="form-group third">
+                <div class="label">Pincode</div>
+                <div class="value"><%= addressData.pincode %></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Educational Qualifications</div>
+        <% if (qualificationData.length > 0) { %>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Qualification</th>
+                        <th>Institution</th>
+                        <th>Board/Univ</th>
+                        <th>Year</th>
+                        <th>Grade/%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% qualificationData.forEach(function(qual) { %>
+                    <tr>
+                        <td><%= qual.qualification %></td>
+                        <td><%= qual.school_or_college_name %></td>
+                        <td><%= qual.board_or_university || '-' %></td>
+                        <td><%= qual.year || '-' %></td>
+                        <td><%= qual.percentage_or_grade || '-' %></td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p style="padding: 10px; color: #666; font-style: italic;">No qualification details provided.</p>
+        <% } %>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Teaching Experience</div>
+        <% if (experienceData.length > 0) { %>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>School Name</th>
+                        <th>Designation</th>
+                        <th>Duration</th>
+                        <th>Total Exp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% experienceData.forEach(function(exp) { %>
+                    <tr>
+                        <td><%= exp.previous_school_name %></td>
+                        <td><%= exp.designation %></td>
+                        <td>
+                            <%= new Date(exp.from_date).toLocaleDateString() %> - 
+                            <%= new Date(exp.to_date).toLocaleDateString() %>
+                        </td>
+                        <td><%= exp.total_experience_in_year %>Y <%= exp.total_experience_in_month %>M</td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p style="padding: 10px; color: #666; font-style: italic;">No previous experience listed (Fresher).</p>
+        <% } %>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Skills & Competencies</div>
+        <div class="form-row">
+            <div class="form-group third">
+                <div class="label">Basic Computer Knowledge</div>
+                <div class="value"><%= skillsData.has_basic_computer_knowledge ? 'YES' : 'NO' %></div>
+            </div>
+            <div class="form-group third">
+                <div class="label">MS Office Proficiency</div>
+                <div class="value"><%= skillsData.know_ms_office ? 'YES' : 'NO' %></div>
+            </div>
+            <div class="form-group third">
+                <div class="label">Online Teaching Tools</div>
+                <div class="value"><%= skillsData.know_online_teaching_tools ? 'YES' : 'NO' %></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Declaration</div>
+        <div class="declaration">
+            <p>I hereby declare that the information provided in this application is true, correct, and complete to the best of my knowledge and belief. I understand that any misrepresentation or omission of facts will be grounds for immediate rejection of this application or termination of service if employed.</p>
+            <br>
+            <p>
+                <strong>Declaration Accepted:</strong> <%= metaData.declaration_accepted ? 'YES' : 'NO' %>
+            </p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Generated by <%= typeof COMPANY !== 'undefined' ? COMPANY.NAME : institution.name %> System on <%= new Date().toLocaleString() %></p>
+        <p>Teacher ID: <%= teacherData.registration_number %></p>
+    </div>
+
+</div>
+
+</body>
+</html>

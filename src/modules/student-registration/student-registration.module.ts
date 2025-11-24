@@ -7,15 +7,19 @@ import { TypeOrmStudentRegistrationRepository } from './repository/student-regis
 import { TypeOrmStudentRegistrationDocumentRepository } from './repository/student-registration-document.repository';
 import { BullModule } from '@nestjs/bullmq';
 import { QUEUE } from '@common/constants';
+import { MailModule } from '@common/mail/mail.module';
 
 @Module({
   imports: [
-    BullModule.registerQueueAsync(
-      { name: QUEUE.EMAIL },
-    ),
-    TypeOrmModule.forFeature([StudentRegistration])
+    // BullModule.registerQueueAsync(
+    //   { name: QUEUE.EMAIL },
+    // ),
+    TypeOrmModule.forFeature([StudentRegistration]),
+    MailModule,
   ],
-  providers: [StudentRegistrationService, StudentRegistrationResolver,// BIND THE INTERFACE TOKEN TO THE IMPLEMENTATION
+  providers: [
+    StudentRegistrationService,
+    StudentRegistrationResolver,// BIND THE INTERFACE TOKEN TO THE IMPLEMENTATION
     {
       provide: 'IStudentRegistrationRepository',
       useClass: TypeOrmStudentRegistrationRepository,
