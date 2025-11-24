@@ -28,7 +28,7 @@ async function bootstrap() {
   app.useLogger(logger);
 
   app.enableCors({
-    origin: ['https://dreamfoundation.in/'],
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
     credentials: true,
