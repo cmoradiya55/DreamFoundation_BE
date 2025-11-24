@@ -34,7 +34,7 @@ registrationDetailsHtml += '<p style="margin: 8px 0;"><strong>Class:</strong> ' 
 registrationDetailsHtml += '<p style="margin: 8px 0;"><strong>Submission Date:</strong> ' + submissionDate + '</p>';
 
 if (studentData.date_of_birth) {
-  registrationDetailsHtml += '<p style="margin: 8px 0;"><strong>Date of Birth:</strong> ' + studentData.date_of_birth + '</p>';
+  registrationDetailsHtml += '<p style="margin: 8px 0;"><strong>Date of Birth:</strong> ' + new Date(studentData.date_of_birth).toLocaleDateString() + '</p>';
 }
 %>
 
@@ -51,6 +51,7 @@ if (studentData.date_of_birth) {
   <div class="email-container">
 
     <%- include('components/header', {
+      title: COMPANY.NAME,
       subtitle: 'Admission Registration Confirmation'
     }) %>
 
@@ -58,9 +59,9 @@ if (studentData.date_of_birth) {
 
       <div class="welcome-section">
         <h2 style="color: #1E4034; margin-bottom: 15px; margin-top: 0; font-size: 24px;">
-          Thank You for Your Registration!
+          Thank You for Choosing <%= COMPANY.SUB_COMPANY_1 %>!
         </h2>
-        <p style="margin-bottom: 10px;">Dear <%= studentData.father_name %>,</p>
+        <p style="margin-bottom: 10px;">Dear Parents,</p>
         <p style="margin-bottom: 10px;">
           We are pleased to confirm that your child <strong><%= studentData.full_name %></strong>'s registration has been successfully received.
         </p>

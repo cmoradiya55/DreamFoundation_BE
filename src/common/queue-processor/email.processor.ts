@@ -2,10 +2,8 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { COMPANY, QUEUE } from '@common/constants';
 import { ConfigService } from '@nestjs/config';
-// import axios from 'axios';
-// import { HttpService } from '@nestjs/axios';
-import { lastValueFrom } from 'rxjs';
 import { MailService } from '@common/mail/mail.service';
+import { AppHelper } from '@common/helper/app.helper';
 
 export const EMAIL_TYPES = {
     STUDENT_REGISTRATION_CONFIRMATION: 'sendStudentRegistrationConfirmationEmail',
@@ -88,11 +86,12 @@ export class EmailProcessor extends WorkerHost {
         const pdfTemplate = 'student-registration-details';
 
         console.log('FInal Student Data:', finalStudent);
+        const student_class = AppHelper.studentClassPrefixMap(finalStudent.class);
         const templateData = {
             COMPANY,
             full_name: finalStudent.full_name,
             registration_number: finalStudent.registration_number,
-            student_class: finalStudent.class,
+            student_class: student_class,
             father_name: finalStudent.father_name,
             date_of_birth: finalStudent.date_of_birth,
             email: finalStudent.father_email,
@@ -104,7 +103,7 @@ export class EmailProcessor extends WorkerHost {
             // Student info
             full_name: finalStudent.full_name,
             registration_number: finalStudent.registration_number,
-            student_class: finalStudent.class,
+            student_class: student_class,
             date_of_birth: finalStudent.date_of_birth,
             gender: finalStudent.gender,
             blood_group: finalStudent.blood_group,

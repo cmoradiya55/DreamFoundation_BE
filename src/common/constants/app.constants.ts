@@ -76,8 +76,9 @@ export const TEACHER_REGISTRATION_PREFIX = 'TR';
 
 export const COMPANY = {
   NAME: 'Dream Foundation',
+  SUB_COMPANY_1: 'Tiny Yatra',
   EMAIL: 'tinyyatra99@gmail.com',
-  PHONE: '+91 9562145780',
+  PHONE: '+91 63561 79699',
   ADDRESS: '123 Dream St, Imagination City, Country',
   WEBSITE: 'https://www.dreamfoundation.in/',
 } as const;
