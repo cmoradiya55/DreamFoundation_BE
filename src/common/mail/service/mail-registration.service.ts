@@ -139,8 +139,7 @@ export class MailRegistrationService {
     const pdfBuffer = await this.emailService.renderEmailPDF(pdfTemplate, pdfData);
 
     const mailOptions: any = {
-      // to: finalStudent.father_email,
-      to: 'ishwartrada15@gmail.com',
+      to: finalStudent.father_email,
       subject: 'Welcome to Dream Foundation!',
       html,
     };
@@ -228,8 +227,7 @@ export class MailRegistrationService {
     const pdfBuffer = await this.emailService.renderEmailPDF(pdfTemplate, pdfData);
 
     const mailOptions: any = {
-      // to: teacherDetails.email,
-      to: 'ishwartrada15@gmail.com', // Hardcoded for testing as per your snippet
+      to: teacherDetails.email,
       subject: `Teacher Application Received: ${teacherDetails.full_name}`,
       html,
     };
