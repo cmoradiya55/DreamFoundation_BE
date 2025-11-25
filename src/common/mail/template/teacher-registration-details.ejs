@@ -3,6 +3,12 @@
 // 1. DATA PRE-PROCESSING & DEFAULTS
 // ==========================================
 
+// Helper to safely flatten arrays if they come in nested (e.g. [[Obj], [Obj]])
+const safeArray = (arr) => {
+    if (typeof arr === 'undefined' || !Array.isArray(arr)) return [];
+    return arr.flat();
+};
+
 // Teacher Personal Data
 const teacherData = {
     full_name: typeof full_name !== 'undefined' ? full_name : 'N/A',
@@ -42,11 +48,10 @@ const skillsData = {
     know_online_teaching_tools: typeof know_online_teaching_tools !== 'undefined' ? know_online_teaching_tools : false,
 };
 
-// Dynamic Arrays (Experience, Qualifications, Documents)
-// We default to empty arrays [] if data is missing to prevent crashes
-const experienceData = typeof experiences !== 'undefined' && Array.isArray(experiences) ? experiences : [];
-const qualificationData = typeof qualifications !== 'undefined' && Array.isArray(qualifications) ? qualifications : [];
-const docData = typeof documents !== 'undefined' && Array.isArray(documents) ? documents : [];
+// Dynamic Arrays - Flattened to fix your nesting issue
+const experienceData = safeArray(typeof experiences !== 'undefined' ? experiences : []);
+const qualificationData = safeArray(typeof qualifications !== 'undefined' ? qualifications : []);
+const docData = safeArray(typeof documents !== 'undefined' ? documents : []);
 
 // Meta Data
 const metaData = {
@@ -56,7 +61,7 @@ const metaData = {
 
 // Institution Config
 const institution = {
-    name: typeof institution_name !== 'undefined' ? institution_name : 'VisioniteTech Academy' // Fallback name
+    name: typeof institution_name !== 'undefined' ? institution_name : 'VisioniteTech Academy'
 };
 %>
 
@@ -180,6 +185,12 @@ const institution = {
             font-size: 12px;
             text-align: justify;
         }
+
+        /* --- NEW STYLES FOR DOCUMENT APPENDING --- */
+        .page-break { page-break-before: always; }
+        .document-preview { margin-top: 20px; text-align: center; page-break-inside: avoid; }
+        .document-preview img { max-width: 100%; max-height: 900px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .document-fallback { padding: 40px; background: #f8f9fa; border: 2px dashed #dee2e6; text-align: center; color: #6c757d; }
         
         .footer {
             margin-top: 60px;
@@ -196,6 +207,7 @@ const institution = {
             .pdf-container { border: none; padding: 20px; max-width: 100%; }
             .section-title { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .data-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .page-break { page-break-before: always; }
         }
     </style>
 </head>
@@ -207,6 +219,19 @@ const institution = {
         <h1 class="institution-name"><%= COMPANY.NAME + "(" + COMPANY.SUB_COMPANY_1 + ")" %></h1>
         <h2 class="form-title">Teacher Application Form</h2>
         <p>Registration No: <strong><%= teacherData.registration_number %></strong></p>
+    </div>
+
+    
+    <div class="photo-box">
+        <% 
+        const passportDoc = docData.find(doc => doc && doc.document_type === 'passportSizePhoto');
+        %>
+        
+        <% if (passportDoc && passportDoc.document_url) { %>
+            <img src="<%= passportDoc.document_url %>" alt="Passport Photo" style="width: 100%; height: 100%; object-fit: cover;" />
+        <% } else { %>
+            Passport Size<br>Photo
+        <% } %>
     </div>
 
     <div class="section">
@@ -277,22 +302,25 @@ const institution = {
 
     <div class="section">
         <div class="section-title">Educational Qualifications</div>
-        <% if (qualificationData.length > 0) { %>
+        <% if (qualificationData && qualificationData.length > 0) { %>
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Qualification</th>
-                        <th>Institution</th>
-                        <th>Board/Univ</th>
-                        <th>Year</th>
-                        <th>Grade/%</th>
+                        <th style="width: 25%">Qualification</th>
+                        <th style="width: 30%">Institution</th>
+                        <th style="width: 25%">Board/Univ</th>
+                        <th style="width: 10%">Year</th>
+                        <th style="width: 10%">Grade</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% qualificationData.forEach(function(qual) { %>
+                    <% qualificationData.forEach(function(qual) { 
+                       // Safety fallback in case individual item is still undefined
+                       if(!qual) return; 
+                    %>
                     <tr>
-                        <td><%= qual.qualification %></td>
-                        <td><%= qual.school_or_college_name %></td>
+                        <td><%= qual.qualification || '-' %></td>
+                        <td><%= qual.school_or_college_name || '-' %></td>
                         <td><%= qual.board_or_university || '-' %></td>
                         <td><%= qual.year || '-' %></td>
                         <td><%= qual.percentage_or_grade || '-' %></td>
@@ -301,38 +329,46 @@ const institution = {
                 </tbody>
             </table>
         <% } else { %>
-            <p style="padding: 10px; color: #666; font-style: italic;">No qualification details provided.</p>
+            <div class="value" style="color: #666; font-style: italic;">No qualification details provided.</div>
         <% } %>
     </div>
 
     <div class="section">
         <div class="section-title">Teaching Experience</div>
-        <% if (experienceData.length > 0) { %>
+        <% if (experienceData && experienceData.length > 0) { %>
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>School Name</th>
-                        <th>Designation</th>
-                        <th>Duration</th>
-                        <th>Total Exp</th>
+                        <th style="width: 30%">School Name</th>
+                        <th style="width: 25%">Designation</th>
+                        <th style="width: 25%">Duration</th>
+                        <th style="width: 20%">Total Exp</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% experienceData.forEach(function(exp) { %>
+                    <% experienceData.forEach(function(exp) { 
+                       if(!exp) return;
+                    %>
                     <tr>
-                        <td><%= exp.previous_school_name %></td>
-                        <td><%= exp.designation %></td>
+                        <td><%= exp.previous_school_name || '-' %></td>
+                        <td><%= exp.designation || '-' %></td>
                         <td>
-                            <%= new Date(exp.from_date).toLocaleDateString() %> - 
-                            <%= new Date(exp.to_date).toLocaleDateString() %>
+                            <% if(exp.from_date && exp.to_date) { %>
+                                <%= new Date(exp.from_date).toLocaleDateString() %> - 
+                                <%= new Date(exp.to_date).toLocaleDateString() %>
+                            <% } else { %> - <% } %>
                         </td>
-                        <td><%= exp.total_experience_in_year %>Y <%= exp.total_experience_in_month %>M</td>
+                        <td>
+                            <% if(exp.total_experience_in_year || exp.total_experience_in_month) { %>
+                                <%= exp.total_experience_in_year || 0 %>Y <%= exp.total_experience_in_month || 0 %>M
+                            <% } else { %> - <% } %>
+                        </td>
                     </tr>
                     <% }); %>
                 </tbody>
             </table>
         <% } else { %>
-            <p style="padding: 10px; color: #666; font-style: italic;">No previous experience listed (Fresher).</p>
+            <div class="value" style="color: #666; font-style: italic;">No previous experience listed (Fresher).</div>
         <% } %>
     </div>
 
@@ -364,6 +400,47 @@ const institution = {
             </p>
         </div>
     </div>
+
+    <!-- ==========================================
+         NEW: APPENDED DOCUMENTS SECTION
+         ========================================== -->
+
+    <% 
+        let imageIndex = 0;
+        const imageDocs = docData.filter(doc => {
+            if (!doc || !doc.document_url) return false;
+            if(doc.document_type === 'passportSizePhoto') return false;
+            const url = doc.document_url.toLowerCase();
+            return url.match(/\.(jpeg|jpg|gif|png|webp)($|\?)/);
+        });
+    %>
+    <% if (imageDocs && imageDocs.length > 0) { %>
+        <div class="page-break"></div>
+        <div class="section">
+            <div class="section-title">Uploaded Documents</div>
+            
+            <% imageDocs.forEach(function(doc, index) { 
+                if(!doc || !doc.document_url) return;
+                const url = doc.document_url.toLowerCase();
+                // Simple regex to check for image extensions
+                const isImage = url.match(/\.(jpeg|jpg|png|webp|heic)($|\?)/) != null;
+            %>
+                <div class="document-preview">
+                    <h3 style="margin-bottom: 15px; color: #1E4034; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                        <%= doc.document_type || 'Document ' + (index + 1) %>
+                    </h3>
+                    
+                    <% if (isImage) { %>
+                        <img src="<%= doc.document_url %>" alt="<%= doc.document_type %>">
+                    <% } %>
+                </div>
+                
+                <% if(index < imageDocs.length - 1) { %> 
+                    <div class="page-break"></div> 
+                <% } %>
+            <% }); %>
+        </div>
+    <% } %>
 
     <div class="footer">
         <p>Generated by <%= typeof COMPANY !== 'undefined' ? COMPANY.NAME : institution.name %> System on <%= new Date().toLocaleString() %></p>

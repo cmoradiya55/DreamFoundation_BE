@@ -88,7 +88,7 @@ export const EMAIL_TYPES = {
 } as const;
 
 export const ALLOWED_CONTENT_TYPES = {
-  IMAGE: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'],
+  IMAGE: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic'],
   PDF: ['application/pdf'],
 } as const;
 

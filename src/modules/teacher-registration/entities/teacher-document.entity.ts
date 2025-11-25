@@ -9,7 +9,9 @@ import {
     JoinColumn,
 } from 'typeorm';
 import { TeacherRegistration } from './teacher-registration.entity';
+import { ObjectType } from '@nestjs/graphql';
 
+@ObjectType()
 @Entity({ name: 'teacher_document' })
 export class TeacherDocument {
     @PrimaryGeneratedColumn()

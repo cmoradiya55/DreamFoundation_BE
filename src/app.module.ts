@@ -18,6 +18,7 @@ import { EmailProcessor } from '@common/queue-processor/email.processor';
 import { MailModule } from '@common/mail/mail.module';
 import { TeacherRegistrationModule } from '@modules/teacher-registration/teacher-registration.module';
 import { StorageModule } from './common/provider/storage/storage.module';
+import { WomenHealthCheckUpEventModule } from './modules/women_health_check_up_event/women_health_check_up_event.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { StorageModule } from './common/provider/storage/storage.module';
     MailModule,
     TeacherRegistrationModule,
     StorageModule,
+    WomenHealthCheckUpEventModule,
   ],
   controllers: [AppController],
   providers: [AppService, EmailProcessor],

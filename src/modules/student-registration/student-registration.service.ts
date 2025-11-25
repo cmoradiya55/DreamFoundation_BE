@@ -169,12 +169,15 @@ export class StudentRegistrationService {
       const regNo = AppHelper.generateRegNo(prefix, savedStudent.id);
       savedStudent.registration_number = regNo;
 
-      const finalStudent = await this.studentRegistrationRepo.save(savedStudent, manager);
+      await this.studentRegistrationRepo.save(savedStudent, manager);
+
+      const studentDetails = await this.studentRegistrationRepo.findOneById(savedStudent.id, manager);
+
 
       // this.emailQueue.add(EMAIL_TYPES.STUDENT_REGISTRATION_CONFIRMATION, { finalStudent })
-      this.emailRegistrationService.process(EMAIL_TYPES.STUDENT_REGISTRATION_CONFIRMATION, { finalStudent })
+      this.emailRegistrationService.process(EMAIL_TYPES.STUDENT_REGISTRATION_CONFIRMATION, { studentDetails })
 
-      return StudentRegistrationMapper.toCreateResponse(finalStudent);
+      return StudentRegistrationMapper.toCreateResponse(studentDetails);
     }, true);
   }
 }
