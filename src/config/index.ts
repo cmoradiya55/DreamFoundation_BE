@@ -2,6 +2,7 @@ import {
     appConfig,
     awsConfig,
     mailConfig,
+    puppeteerConfig,
     redisConfig,
 } from "./app.config";
 import { dbConfig } from "./db.config";
@@ -11,5 +12,6 @@ export default [
     dbConfig,
     awsConfig,
     redisConfig,
-    mailConfig
+    mailConfig,
+    puppeteerConfig
 ];

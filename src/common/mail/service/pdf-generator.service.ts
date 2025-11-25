@@ -1,7 +1,7 @@
 import { S3Helper } from '@common/helper/s3.helper';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as puppeteer from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 
 export interface PdfGenerationResult {
     buffer: Buffer;
@@ -18,12 +18,13 @@ export class PdfGeneratorService {
      * Generate PDF from HTML and optionally upload to S3
      */
     async generatePdfFromHtml(html: string): Promise<Buffer> {
-        let browser: puppeteer.Browser | null = null;
+        let browser: Browser | null = null;
 
         try {
             // Launch Puppeteer
             browser = await puppeteer.launch({
                 headless: true,
+                executablePath: this.configService.getOrThrow<string>('puppeteer.executable_path'),
                 args: [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',

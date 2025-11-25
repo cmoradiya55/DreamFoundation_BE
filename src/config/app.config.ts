@@ -36,3 +36,7 @@ export const mailConfig = registerAs('mail', () => ({
     from_name: process.env.MAIL_USERNAME,
     pass: process.env.MAIL_PASS,
 }));
+
+export const puppeteerConfig = registerAs('puppeteer', () => ({
+    executable_path: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
+}));
