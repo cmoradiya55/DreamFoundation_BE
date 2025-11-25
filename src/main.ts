@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
-import { S3Helper } from './common/helper/s3.helper';
 import { TrimPipe } from './common/pipe/trim.pipe';
 import { ResponseHelper } from './common/helper/response.helper';
 import { PaginationService } from './common/provider/pagination/pagination.service';
@@ -45,14 +44,6 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
     }));
-  // app.useGlobalGuards(jwtAuthGuard);
-  S3Helper.init({
-    region: config.getOrThrow<string>('aws.region'),
-    accessKeyId: config.getOrThrow<string>('aws.access_key_id'),
-    secretAccessKey: config.getOrThrow<string>('aws.secret_access_key'),
-    bucket: config.getOrThrow<string>('aws.bucket'),
-    baseUrl: config.getOrThrow<string>('aws.base_url'),
-  });
 
   ResponseHelper.init(config.getOrThrow<string>('aws.base_url'));
 

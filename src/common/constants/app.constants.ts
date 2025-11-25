@@ -34,12 +34,10 @@ export const OLD_DATE = '2000-01-01';
 export const MAX_AGE_FOR_BIRTHDATE = 80;
 
 export const S3_BUCKETS = {
-  CUSTOMERS: 'customers',
-  CUSTOMER_DOCS: 'customer/docs',
-  ORDERS: 'orders',
-  ORDER_REFUND: 'orders/refund',
-  PRODUCT_RATING: 'rating'
+  STUDENT: 'students',
+  TEACHER: 'teachers',
 } as const;
+export const S3_BUCKET_FOLDERS = Object.values(S3_BUCKETS);
 
 export const SYSTEM_SETTING = {
   INTEREST_PERCENTAGE: 1,
@@ -88,3 +86,13 @@ export const EMAIL_TYPES = {
   TEACHER_REGISTRATION_CONFIRMATION: 'sendTeacherRegistrationConfirmationEmail',
   OTP_EMAIL: 'sendOtpEmail',
 } as const;
+
+export const ALLOWED_CONTENT_TYPES = {
+  IMAGE: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'],
+  PDF: ['application/pdf'],
+} as const;
+
+export const ALLOWED_CONTENT_TYPES_FLAT = [
+  ...ALLOWED_CONTENT_TYPES.IMAGE,
+  ...ALLOWED_CONTENT_TYPES.PDF,
+];

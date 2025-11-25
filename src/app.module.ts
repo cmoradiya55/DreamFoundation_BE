@@ -17,6 +17,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { EmailProcessor } from '@common/queue-processor/email.processor';
 import { MailModule } from '@common/mail/mail.module';
 import { TeacherRegistrationModule } from '@modules/teacher-registration/teacher-registration.module';
+import { StorageModule } from './common/provider/storage/storage.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { TeacherRegistrationModule } from '@modules/teacher-registration/teacher
     StudentRegistrationModule,
     MailModule,
     TeacherRegistrationModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService, EmailProcessor],

@@ -1,4 +1,3 @@
-import { S3Helper } from '@common/helper/s3.helper';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import puppeteer, { Browser } from 'puppeteer';

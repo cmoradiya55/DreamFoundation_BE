@@ -94,7 +94,13 @@ input PaginationQueryDto {
   page: Int! = 1
 }
 
+type PresignedUrlResponse {
+  file_url: String!
+  upload_url: String!
+}
+
 type Query {
+  presignedUrl(uploadFile: UploadFileDto!): PresignedUrlResponse!
   studentRegistration(input: GetStudentRegistrationDto!): StudentRegistrationResponse
   studentRegistrations(pagination: PaginationQueryDto!): StudentRegistrationPaginatedResponse!
   teacherRegistration(id: Int!): TeacherRegistrationResponse!
@@ -251,4 +257,10 @@ input UpdateStudentRegistrationInput {
   residentialAddress: String
   specialNeedsDetails: String
   vaccinationRecord: String
+}
+
+input UploadFileDto {
+  contentType: String!
+  fileName: String!
+  module: String!
 }
