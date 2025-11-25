@@ -23,7 +23,7 @@ export class PdfGeneratorService {
             // Launch Puppeteer
             browser = await puppeteer.launch({
                 headless: true,
-                // executablePath: this.configService.getOrThrow<string>('puppeteer.executable_path'),
+                executablePath: this.configService.getOrThrow<string>('puppeteer.executable_path'),
                 args: [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
