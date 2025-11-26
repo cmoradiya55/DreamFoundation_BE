@@ -87,12 +87,4 @@ export const EMAIL_TYPES = {
   OTP_EMAIL: 'sendOtpEmail',
 } as const;
 
-export const ALLOWED_CONTENT_TYPES = {
-  IMAGE: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic'],
-  PDF: ['application/pdf'],
-} as const;
-
-export const ALLOWED_CONTENT_TYPES_FLAT = [
-  ...ALLOWED_CONTENT_TYPES.IMAGE,
-  ...ALLOWED_CONTENT_TYPES.PDF,
-];
+export const ALLOWED_IMAGE_CONTENT_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic'] as const;

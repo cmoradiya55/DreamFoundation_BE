@@ -11,7 +11,7 @@ export class StorageResolver {
   async getPresignedUrl(
     @Args('uploadFile') uploadFileDto: UploadFileDto,
   ) {
-    const data = await this.storageService.getPresignedUrl(uploadFileDto);
+    const data = await this.storageService.getPresignedUrlForImage(uploadFileDto);
     return data;
   }
 }
