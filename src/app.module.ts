@@ -19,6 +19,7 @@ import { MailModule } from '@common/mail/mail.module';
 import { TeacherRegistrationModule } from '@modules/teacher-registration/teacher-registration.module';
 import { StorageModule } from './common/provider/storage/storage.module';
 import { WomenHealthCheckUpEventModule } from './modules/women_health_check_up_event/women_health_check_up_event.module';
+import { HealthyBabyCompetitonModule } from './modules/healthy-baby-competiton/healthy-baby-competiton.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { WomenHealthCheckUpEventModule } from './modules/women_health_check_up_e
     TeacherRegistrationModule,
     StorageModule,
     WomenHealthCheckUpEventModule,
+    HealthyBabyCompetitonModule,
   ],
   controllers: [AppController],
   providers: [AppService, EmailProcessor],

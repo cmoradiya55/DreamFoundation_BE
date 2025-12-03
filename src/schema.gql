@@ -2,6 +2,25 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateHealthyBabyCompetitionDto {
+  consentFormAccepted: Boolean!
+  dateOfBirth: String!
+  emergencyContactName: String!
+  emergencyContactRelation: String!
+  emergencyMobile: Float!
+  emergencyMobileCountryCode: Int!
+  fatherMobile: Float!
+  fatherMobileCountryCode: Int!
+  fatherName: String!
+  fullName: String!
+  gender: Gender!
+  heightInCm: Float!
+  motherMobile: Float!
+  motherMobileCountryCode: Int!
+  motherName: String!
+  weightInKg: Float!
+}
+
 input CreateStudentRegistrationDto {
   addressLine1: String!
   addressLine2: String!
@@ -88,6 +107,7 @@ type Mutation {
   createStudentRegistration(createStudentRegistrationInput: CreateStudentRegistrationDto!): StudentRegistrationResponse!
   createTeacherRegistration(createTeacherRegistrationDto: CreateTeacherRegistrationDto!): TeacherRegistrationResponse!
   createWomenHealthCheckUpEvent(input: CreateWomenHealthCheckUpEventInput!): Boolean!
+  healthyBabyCompetitionRegistration(healthyBabyCompetitionInput: CreateHealthyBabyCompetitionDto!): Boolean!
   removeStudentRegistration(id: Int!): StudentRegistrationResponse!
   updateStudentRegistration(updateStudentRegistrationInput: UpdateStudentRegistrationInput!): StudentRegistrationResponse!
 }

@@ -1,0 +1,1 @@
+export const MAX_AGE_ALLOWED = 3;

@@ -13,7 +13,7 @@ import { ResponseInterceptor } from './common/interceptor/response/response.inte
 
 async function bootstrap() {
   const API_PREFIX = 'api/v1';
-  const port = process.env.PORT || 3000;
+  const port = process.env.APP_PORT || 3000;
   const app = await NestFactory.create(AppModule);
 
   console.log(`🚀 App started on ${port}`);
